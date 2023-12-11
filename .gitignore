@@ -1,0 +1,31 @@
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.db
+*.js
+mvn*
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### VS Code ###
+.vscode/
+
+# Log file
+*.log
+
+/src/main/resources/static/css/bootstrap*
+/src/main/resources/static/js/bootstrap*
+/.mvn/wrapper/maven-wrapper*
