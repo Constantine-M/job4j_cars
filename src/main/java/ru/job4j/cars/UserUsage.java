@@ -7,6 +7,13 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.UserRepository;
 
+/**
+ * Данный класс используется для
+ * наглядной демонстрации работы
+ * фреймворка Hibernate.
+ *
+ * В дальнейшем будет удален.
+ */
 public class UserUsage {
 
     public static void main(String[] args) {

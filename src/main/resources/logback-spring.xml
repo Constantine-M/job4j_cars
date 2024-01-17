@@ -43,7 +43,7 @@
                     Когда файл достигает размера 1 Мб, то он именуется
                     согласно шаблону и помещается в архивную директорию-->
             <fileNamePattern>
-                ${LOG_FILE}/archived/dream-job-%d{yyyy-MM-dd}.%i.log
+                ${LOG_FILE}/archived/cars-%d{yyyy-MM-dd}.%i.log
             </fileNamePattern>
 
             <!--    Вот здесь как раз и настроено ограничение размера файла в 1 Мб.
