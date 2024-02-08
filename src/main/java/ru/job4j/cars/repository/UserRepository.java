@@ -2,149 +2,122 @@ package ru.job4j.cars.repository;
 
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
+import org.hibernate.event.spi.PersistEventListener;
 import ru.job4j.cars.model.User;
 
-import java.util.ArrayList;
+import javax.persistence.PersistenceException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
- * В данном классе мы использовали
- * аннотацию Lombok {@link Slf4j}
- * для дефолтной настройки логера.
+ * Чтобы не дублировать весь код CRUD-операций,
+ * мы вынесли его в отдельный класс
+ * {@link CrudRepository}, в котором
+ * будет использоваться одна абстрактная
+ * команда, а в данном классе мы реализуем
+ * эту абстрактную команду.
  */
-@Slf4j
 @AllArgsConstructor
 public class UserRepository {
 
-    private final SessionFactory sessionFactory;
+    private final CrudRepository crudRepository;
 
     /**
      * Сохранить в базе.
      *
-     * Здесь мы произвели обычную вставку
-     * в таблицу, поэтому используем метод
-     * {@link Session#save}.
-     *
-     * Для данной операции используем
-     * блок try-catch.
-     *
-     * В блоке finally необходимо закрывать
-     * ресурс (по аналогии с Connection в
-     * JDBC). Данный комментарий относится ко
-     * всем методам, где мы не используем
-     * try-with-resources.
+     * Данный метод добавляет модель
+     * {@link User} в persistent context.
+     * По сути то же самое, что делает
+     * {@link Session#save}, но есть нюансы.
+     * {@link Session#persist} ничего не
+     * возвращает, работает только в рамках
+     * транзакции. Если вызвать метод у
+     * detached-объекта, то будет выброшено
+     * исключение {@link PersistenceException}.
+     * 
+     * В Hibernate все построено на
+     * event-ах и listener-ах.
+     * Создается event, который обрабатывается
+     * соответствующим listener-ом
+     * {@link PersistEventListener#onPersist},
+     * который собственно и выполнит команду
+     * на добавление user-а в persistent
+     * context.
      *
      * @param user пользователь
      * @return пользователь с ID
      */
     public User create(User user) {
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.save(user);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            log.error("TRANSACTION ROLLBACK! Hibernate exception logged: {}", e.getMessage());
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
+        crudRepository.run(session -> session.persist(user));
         return user;
     }
 
     /**
      * Обновить в базе пользователя.
      *
-     * Для данной операции используем
-     * блок try-catch.
+     * Метод {@link Session#merge} по сути
+     * то же самое, что и метод
+     * {@link Session#update}.
+     *
+     * В {@link Session#merge} главным
+     * является наш User (которого передали в
+     * метод) - поля в сущности главнее, чем
+     * то, что хранится в БД,
+     *
+     * 1.Производится запрос в БД
+     * 2.Создается новая сущность на основании
+     * данных User
+     * 3.Устанавливаются значения полей
+     * нового User из старого (которого
+     * мы передали в метод).
+     *
+     * {@link Session#merge} переводит
+     * состояние объекта из detached в
+     * persistent.
      *
      * @param user пользователь.
      */
     public void update(User user) {
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.createQuery(
-                            "UPDATE User as user SET login = :fLogin, password = :fPassword WHERE user.id = :fId")
-                    .setParameter("fLogin", user.getLogin())
-                    .setParameter("fPassword", user.getPassword())
-                    .setParameter("fId", user.getId())
-                    .executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            log.error("TRANSACTION ROLLBACK! Hibernate exception logged: {}", e.getMessage());
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
+        crudRepository.run(session -> session.merge(user));
     }
 
     /**
      * Удалить пользователя по id.
      *
-     * Для данной операции используем
-     * блок try-catch.
-     *
      * @param userId ID
      */
     public void delete(int userId) {
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.createQuery(
-                            "DELETE User as user WHERE user.id = :fId")
-                    .setParameter("fId", userId)
-                    .executeUpdate();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            log.error("TRANSACTION ROLLBACK! Hibernate exception logged: {}", e.getMessage());
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
+        crudRepository.run(
+                "DELETE User as user WHERE user.id = :fId",
+                Map.of("fId", userId)
+        );
     }
 
     /**
      * Список пользователей, отсортированных по id.
      *
-     * В данноме методе мы использовали
-     * try-with-resources, поэтому наша
-     * сессия закроется автоматически.
-     *
      * @return список пользователей.
      */
     public List<User> findAllOrderById() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            Query<User> query = session.createQuery("FROM User user ORDER BY user.id", User.class);
-            session.getTransaction().commit();
-            return new ArrayList<>(query.list());
-        }
+        return crudRepository.query(
+                "FROM User user ORDER BY user.id ASC",
+                User.class
+        );
     }
 
     /**
      * Найти пользователя по ID
      *
-     * Здесь, чтобы вернуть Optional<User>,
-     * мы используем специальный метод,
-     * определенный в {@link Query} -
-     * {@link Query#uniqueResultOptional}.
-     *
      * @return пользователь.
      */
     public Optional<User> findById(int userId) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            Query<User> query = session.createQuery("FROM User user WHERE user.id = :fId", User.class);
-            query.setParameter("fId", userId);
-            session.getTransaction().commit();
-            return query.uniqueResultOptional();
-        }
+        return crudRepository.optional(
+                "FROM User user WHERE user.id = :fId",
+                User.class,
+                Map.of("fId", userId)
+        );
     }
 
     /**
@@ -154,13 +127,11 @@ public class UserRepository {
      * @return список пользователей.
      */
     public List<User> findByLikeLogin(String key) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            Query<User> query = session.createQuery("FROM User user WHERE user.login LIKE :keyword", User.class);
-            query.setParameter("keyword", "%" + key + "%");
-            session.getTransaction().commit();
-            return new ArrayList<>(query.list());
-        }
+        return crudRepository.query(
+                "FROM User user WHERE user.login LIKE :keyword",
+                User.class,
+                Map.of("keyword", "%" + key + "%")
+        );
     }
 
     /**
@@ -170,12 +141,10 @@ public class UserRepository {
      * @return Optional or user.
      */
     public Optional<User> findByLogin(String login) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            Query<User> query = session.createQuery("FROM User user WHERE user.login = :fLogin", User.class);
-            query.setParameter("fLogin", login);
-            session.getTransaction().commit();
-            return Optional.ofNullable(query.uniqueResult());
-        }
+        return crudRepository.optional(
+                "FROM User user WHERE user.login = :fLogin",
+                User.class,
+                Map.of("fLogin", login)
+        );
     }
 }
