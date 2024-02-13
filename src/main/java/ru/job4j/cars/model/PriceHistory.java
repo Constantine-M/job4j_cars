@@ -8,11 +8,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Модел описывает историю изменения
+ * Модель описывает историю изменения
  * стоимости автомобиля.
  *
  * @author Constantine on 11.02.2024
@@ -36,19 +34,10 @@ public class PriceHistory {
 
     private LocalDateTime created;
 
-    /**
-     * История изменения стоимости может быть
-     * у нескольких объявлений.
-     */
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "auto_post_id")
-    private List<Post> posts = new ArrayList<>();
-
-    public PriceHistory(int id, Long before, Long after, LocalDateTime created, List<Post> posts) {
+    public PriceHistory(int id, Long before, Long after, LocalDateTime created) {
         this.id = id;
         this.before = before;
         this.after = after;
         this.created = created;
-        this.posts = posts;
     }
 }
