@@ -60,4 +60,27 @@ public class Post {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id")
     private List<PriceHistory> priceHistoryList = new ArrayList<>();
+
+    /**
+     * В нашей связи many-to-many главным
+     * будет User. При его удалении, удаляется
+     * непосредственно User и связь с таблицей
+     * participates. Post и его связь с таблицей
+     * participates остается.
+     *
+     * {@link Post} - это родительский объект
+     * (joinColumns)
+     * {@link User} - это объект, который загружаем
+     * в User (inverseJoinColumns)
+     *
+     * Связь unidirectional, т.к. в {@link User}
+     * нет коллекции пользователей.
+     */
+    @ManyToMany
+    @JoinTable(
+            name = "participates",
+            joinColumns = {@JoinColumn(name = "post_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private List<User> posts = new ArrayList<>();
 }

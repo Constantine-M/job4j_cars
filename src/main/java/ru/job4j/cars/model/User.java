@@ -32,27 +32,4 @@ public class User {
     private String login;
 
     private String password;
-
-    /**
-     * В нашей связи many-to-many главным
-     * будет Post. При его удалении, удаляется
-     * непосредственно Post и связь с таблицей
-     * participates. User и его связь с таблицей
-     * participates остается.
-     *
-     * {@link User} - это родительский объект
-     * (joinColumns)
-     * {@link Post} - это объект, который загружаем
-     * в User (inverseJoinColumns)
-     *
-     * Связь unidirectional, т.к. в {@link Post}
-     * нет коллекции пользователей.
-     */
-    @ManyToMany
-    @JoinTable(
-            name = "participates",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "post_id")}
-    )
-    private List<Post> posts = new ArrayList<>();
 }
