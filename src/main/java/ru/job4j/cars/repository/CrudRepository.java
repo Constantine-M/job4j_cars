@@ -1,9 +1,11 @@
 package ru.job4j.cars.repository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ import java.util.function.Function;
  * @author Constantine on 05.02.2024
  */
 @AllArgsConstructor
+@Repository
 public class CrudRepository {
 
     private final SessionFactory sessionFactory;

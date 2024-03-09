@@ -9,10 +9,16 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
 
+<!--    <include file="../scripts/000_dropAll.sql" relativeToChangelogFile="true"/>-->
     <include file="../scripts/001_ddl_create_auto_user.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/002_ddl_create_auto_post.sql" relativeToChangelogFile="true"/>
-    <include file="../scripts/003_dml_insert_auto_user.sql" relativeToChangelogFile="true"/>
-    <include file="../scripts/004_ddl_create_price_history.sql" relativeToChangelogFile="true"/>
-    <include file="../scripts/005_ddl_create_participates.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/003_ddl_create_price_history.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/004_ddl_create_participates.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/005_ddl_create_engine.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/006_ddl_create_cars.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/007_ddl_create_history.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/008_ddl_create_owners.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/009_ddl_create_car_owners.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/010_ddl_alter_auto_post_add_car.sql" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

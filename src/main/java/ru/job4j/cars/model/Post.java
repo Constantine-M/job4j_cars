@@ -1,6 +1,7 @@
 package ru.job4j.cars.model;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import static lombok.EqualsAndHashCode.*;
  *
  * @author Constantine on 11.02.2024
  */
+@DynamicUpdate
 @Entity
 @Table(name = "auto_post")
 @NoArgsConstructor
@@ -30,6 +32,7 @@ public class Post {
 
     private String description;
 
+    @Column(updatable = false)
     private LocalDateTime created;
 
     /**
@@ -59,22 +62,22 @@ public class Post {
      */
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id")
-    private List<PriceHistory> priceHistoryList = new ArrayList<>();
+    private List<PriceHistory> priceHistory = new ArrayList<>();
 
     /**
      * В нашей связи many-to-many главным
-     * будет User. При его удалении, удаляется
-     * непосредственно User и связь с таблицей
-     * participates. Post и его связь с таблицей
+     * будет Post. При его удалении, удаляется
+     * непосредственно Post и связь с таблицей
+     * participates. User и его связь с таблицей
      * participates остается.
      *
      * {@link Post} - это родительский объект
      * (joinColumns)
      * {@link User} - это объект, который загружаем
-     * в User (inverseJoinColumns)
+     * в Post (inverseJoinColumns)
      *
      * Связь unidirectional, т.к. в {@link User}
-     * нет коллекции пользователей.
+     * нет коллекции объявлений.
      */
     @ManyToMany
     @JoinTable(
@@ -82,5 +85,5 @@ public class Post {
             joinColumns = {@JoinColumn(name = "post_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
-    private List<User> posts = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
 }

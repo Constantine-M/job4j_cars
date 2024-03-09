@@ -1,12 +1,18 @@
-package ru.job4j.cars.repository;
+package ru.job4j.cars.repository.user;
 
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.event.spi.PersistEventListener;
+import org.springframework.stereotype.Repository;
+import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.model.User;
+import ru.job4j.cars.repository.CrudRepository;
 
 import javax.persistence.PersistenceException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,8 +25,10 @@ import java.util.Optional;
  * команда, а в данном классе мы реализуем
  * эту абстрактную команду.
  */
+@Slf4j
 @AllArgsConstructor
-public class UserRepository {
+@Repository
+public class UserRepositoryImpl implements UserRepository {
 
     private final CrudRepository crudRepository;
 
@@ -49,9 +57,14 @@ public class UserRepository {
      * @param user пользователь
      * @return пользователь с ID
      */
-    public User create(User user) {
-        crudRepository.run(session -> session.persist(user));
-        return user;
+    public User create(User user) throws RepositoryException {
+        try {
+            crudRepository.run(session -> session.persist(user));
+            return user;
+        } catch (HibernateException e) {
+            log.error(Arrays.toString(e.getStackTrace()));
+            throw new RepositoryException("Repository exception: duplicate user", e);
+        }
     }
 
     /**
@@ -112,12 +125,17 @@ public class UserRepository {
      *
      * @return пользователь.
      */
-    public Optional<User> findById(int userId) {
-        return crudRepository.optional(
-                "FROM User user WHERE user.id = :fId",
-                User.class,
-                Map.of("fId", userId)
-        );
+    public Optional<User> findById(int userId) throws RepositoryException {
+        try {
+            return crudRepository.optional(
+                    "FROM User user WHERE user.id = :fId",
+                    User.class,
+                    Map.of("fId", userId)
+            );
+        } catch (HibernateException e) {
+            log.error(Arrays.toString(e.getStackTrace()));
+            throw new RepositoryException("Repository exception: cant find user", e);
+        }
     }
 
     /**
@@ -126,12 +144,17 @@ public class UserRepository {
      * @param key key
      * @return список пользователей.
      */
-    public List<User> findByLikeLogin(String key) {
-        return crudRepository.query(
-                "FROM User user WHERE user.login LIKE :keyword",
-                User.class,
-                Map.of("keyword", "%" + key + "%")
-        );
+    public List<User> findByLikeLogin(String key) throws RepositoryException {
+        try {
+            return crudRepository.query(
+                    "FROM User user WHERE user.login LIKE :keyword",
+                    User.class,
+                    Map.of("keyword", "%" + key + "%")
+            );
+        } catch (HibernateException e) {
+            log.error(Arrays.toString(e.getStackTrace()));
+            throw new RepositoryException("Repository exception: cant find user by keyword", e);
+        }
     }
 
     /**
@@ -140,11 +163,16 @@ public class UserRepository {
      * @param login login.
      * @return Optional or user.
      */
-    public Optional<User> findByLogin(String login) {
-        return crudRepository.optional(
-                "FROM User user WHERE user.login = :fLogin",
-                User.class,
-                Map.of("fLogin", login)
-        );
+    public Optional<User> findByLogin(String login) throws RepositoryException {
+        try {
+            return crudRepository.optional(
+                    "FROM User user WHERE user.login = :fLogin",
+                    User.class,
+                    Map.of("fLogin", login)
+            );
+        } catch (HibernateException e) {
+            log.error(Arrays.toString(e.getStackTrace()));
+            throw new RepositoryException("Repository exception: cant find user by login", e);
+        }
     }
 }
