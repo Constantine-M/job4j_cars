@@ -28,7 +28,7 @@
         <profile>
             <id>test</id>
             <properties>
-                <liquibase.config>db/liquibase.properties</liquibase.config>
+                <liquibase.config>/db/liquibase.properties</liquibase.config>
             </properties>
             <!--    профиль test мы делаем профилем по умолчанию, потому что сборка проекта
                     по умолчанию должна собираться без настроек окружения-->
@@ -174,8 +174,6 @@
                         <phase>process-resources</phase>
                         <goals>
                             <goal>clearCheckSums</goal>
-                            <!-- Находит SQL запросы, но пока не применяет их к БД-->
-                            <goal>updateSQL</goal>
                             <goal>update</goal>
                         </goals>
                     </execution>
