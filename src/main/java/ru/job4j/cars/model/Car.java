@@ -49,17 +49,7 @@ public class Car {
      * связь между Car и промежуточной таблицей,
      * а владелец и ее связь с промежуточной
      * таблицей остается.
-     *
-     * {@link Car} - это родительский объект
-     * (joinColumns)
-     * {@link Owner} - это объект, который загружаем
-     * в Car (inverseJoinColumns)
      */
-    @ManyToMany
-    @JoinTable(
-            name = "car_owners",
-            joinColumns = {@JoinColumn(name = "car_id")},
-            inverseJoinColumns = {@JoinColumn(name = "owner_id")}
-    )
-    private List<Owner> owners = new ArrayList<>();
+    @OneToMany(mappedBy = "car")
+    private List<CarOwner> carOwners = new ArrayList<>();
 }

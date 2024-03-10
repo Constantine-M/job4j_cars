@@ -28,12 +28,12 @@
         <profile>
             <id>test</id>
             <properties>
-                <liquibase.config>db/liquibase_test.properties</liquibase.config>
+                <liquibase.config>db/liquibase.properties</liquibase.config>
             </properties>
             <!--    профиль test мы делаем профилем по умолчанию, потому что сборка проекта
                     по умолчанию должна собираться без настроек окружения-->
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
         <profile>
@@ -41,9 +41,6 @@
             <properties>
                 <liquibase.config>db/liquibase.properties</liquibase.config>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
         </profile>
     </profiles>
 

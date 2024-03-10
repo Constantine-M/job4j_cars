@@ -44,6 +44,6 @@ public class Owner {
      * У машины может быть несколько владельцев,
      * а у владельца несколько машин.
      */
-    @ManyToMany(mappedBy = "owners")
-    private List<Car> cars = new ArrayList<>();
+    @OneToMany(mappedBy = "owner")
+    private List<CarOwner> carOwners = new ArrayList<>();
 }
