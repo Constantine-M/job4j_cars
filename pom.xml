@@ -28,7 +28,7 @@
         <profile>
             <id>test</id>
             <properties>
-                <liquibase.config>/db/liquibase.properties</liquibase.config>
+                <liquibase.config>db/liquibase-test.properties</liquibase.config>
             </properties>
             <!--    профиль test мы делаем профилем по умолчанию, потому что сборка проекта
                     по умолчанию должна собираться без настроек окружения-->

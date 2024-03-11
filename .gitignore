@@ -1,7 +1,6 @@
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/
-*.db
 *.js
 mvn*
 
