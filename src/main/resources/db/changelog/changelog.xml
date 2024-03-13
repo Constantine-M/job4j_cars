@@ -19,5 +19,9 @@
     <include file="../scripts/008_ddl_create_owners.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/009_ddl_create_car_owners.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/010_ddl_alter_auto_post_add_car.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/011_ddl_alter_owners_drop_column_history.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/012_ddl_drop_history_table.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/013_ddl_alter_car_owners_rename_to_history_owners.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/014_ddl_alter_history_owners_add_col_timestamp.sql" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

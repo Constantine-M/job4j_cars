@@ -51,5 +51,5 @@ public class Car {
      * таблицей остается.
      */
     @OneToMany(mappedBy = "car")
-    private List<CarOwner> carOwners = new ArrayList<>();
+    private List<HistoryOwner> historyOwners = new ArrayList<>();
 }

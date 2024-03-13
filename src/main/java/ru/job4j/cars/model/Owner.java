@@ -30,14 +30,6 @@ public class Owner {
     private String name;
 
     /**
-     * У одного владельца авто своя история
-     * владения автомобилем.
-     */
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "history_id")
-    private History history;
-
-    /**
      * Связь между машинами и владельцами
      * будет двухсторонней.
      *
@@ -45,5 +37,5 @@ public class Owner {
      * а у владельца несколько машин.
      */
     @OneToMany(mappedBy = "owner")
-    private List<CarOwner> carOwners = new ArrayList<>();
+    private List<HistoryOwner> historyOwners = new ArrayList<>();
 }
