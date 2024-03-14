@@ -18,4 +18,10 @@ public interface PostRepository {
     Optional<Post> findById(int id) throws RepositoryException;
 
     void updatePost(Post post);
+
+    Collection<Post> findAllLastDay();
+
+    Collection<Post> findAllWithPhoto();
+
+    Collection<Post> findAllByNameLike(String brand);
 }

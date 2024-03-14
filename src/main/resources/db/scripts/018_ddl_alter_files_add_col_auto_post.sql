@@ -1,0 +1,1 @@
+ALTER TABLE files ADD COLUMN auto_post_id INT REFERENCES auto_post(id);

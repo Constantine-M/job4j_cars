@@ -44,6 +44,12 @@ public class Post {
     private User user;
 
     /**
+     * Одно объявление - одна машина.
+     */
+    @OneToOne(cascade = CascadeType.ALL)
+    private Car car;
+
+    /**
      * У одного объявления может быть
      * несколько измнений  стоимости.
      * Каждое изменение отражается в
@@ -63,6 +69,14 @@ public class Post {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id")
     private List<PriceHistory> priceHistory = new ArrayList<>();
+
+    /**
+     * В одном объявлении может быть несколько
+     * фотографий.
+     */
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "auto_post_id")
+    private List<File> files = new ArrayList<>();
 
     /**
      * В нашей связи many-to-many главным
