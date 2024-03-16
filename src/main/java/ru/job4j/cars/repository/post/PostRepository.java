@@ -23,5 +23,5 @@ public interface PostRepository {
 
     Collection<Post> findAllWithPhoto();
 
-    Collection<Post> findAllByNameLike(String brand);
+    Collection<Post> findAllByName(String brand);
 }
