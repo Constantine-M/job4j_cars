@@ -1,9 +1,6 @@
 package ru.job4j.cars.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -26,6 +23,7 @@ import java.time.ZoneId;
  *
  * @author Constantine on 10.03.2024
  */
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

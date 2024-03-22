@@ -20,6 +20,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "files")
+@Builder
 public class File {
 
     @Id

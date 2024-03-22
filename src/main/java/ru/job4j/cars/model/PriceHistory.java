@@ -1,10 +1,7 @@
 package ru.job4j.cars.model;
 
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.EqualsAndHashCode.Include;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,6 +13,7 @@ import java.time.ZoneId;
  *
  * @author Constantine on 11.02.2024
  */
+@Builder
 @Entity
 @Table(name = "price_history")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)

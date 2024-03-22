@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">org.h2.Driver</property>
+        <!--    FYI. База данных называется "cars"-->
+        <property name="hibernate.connection.url">jdbc:h2:./testdb;MODE=PostgreSQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;</property>
+        <property name="hibernate.connection.username"/>
+        <property name="hibernate.connection.password"/>
+        <!--    Размер пула увеличил до 10. 1 оказалось мало-->
+        <property name="hibernate.connection.pool_size">10</property>
+        <property name="hibernate.current_session_context_class">thread</property>
+        <!--    Показывать SQL запросы, которые формирует Hibernate-->
+        <property name="hibernate.show_sql">true</property>
+        <!--    Показывать SQL запросы в удобочитаемом виде-->
+        <property name="hibernate.format_sql">true</property>
+        <!--    Диалект нужен, чтобы Hibernate не ругался на запросы, которые характерны для
+                определенной версии PostgreSQL. В нашем случае версия 10 и выше-->
+        <property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</property>
+
+        <mapping class="ru.job4j.cars.model.User" />
+        <mapping class="ru.job4j.cars.model.Post" />
+        <mapping class="ru.job4j.cars.model.PriceHistory" />
+        <mapping class="ru.job4j.cars.model.Car" />
+        <mapping class="ru.job4j.cars.model.Engine" />
+        <mapping class="ru.job4j.cars.model.Owner" />
+        <mapping class="ru.job4j.cars.model.HistoryOwner" />
+        <mapping class="ru.job4j.cars.model.File" />
+
+    </session-factory>
+</hibernate-configuration>

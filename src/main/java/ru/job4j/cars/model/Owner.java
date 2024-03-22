@@ -12,6 +12,7 @@ import java.util.List;
  *
  * @author Constantine on 03.03.2024
  */
+@Builder
 @Entity
 @Table(name = "owners")
 @Getter
@@ -36,6 +37,7 @@ public class Owner {
      * У машины может быть несколько владельцев,
      * а у владельца несколько машин.
      */
+    @Builder.Default
     @OneToMany(mappedBy = "owner")
     private List<HistoryOwner> historyOwners = new ArrayList<>();
 }

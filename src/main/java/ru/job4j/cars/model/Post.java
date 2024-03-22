@@ -15,6 +15,7 @@ import static lombok.EqualsAndHashCode.*;
  *
  * @author Constantine on 11.02.2024
  */
+@Builder
 @DynamicUpdate
 @Entity
 @Table(name = "auto_post")
@@ -35,13 +36,7 @@ public class Post {
     @Column(updatable = false)
     private LocalDateTime created;
 
-    /**
-     * У нескольких объявлений может быть
-     * один пользователь.
-     */
-    @ManyToOne
-    @JoinColumn(name = "auto_user_id")
-    private User user;
+    private Long price;
 
     /**
      * Одно объявление - одна машина.
@@ -66,6 +61,7 @@ public class Post {
      * создавать отдельную таблицу, а не
      * использовать нашу схему.
      */
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id")
     private List<PriceHistory> priceHistory = new ArrayList<>();
@@ -74,6 +70,7 @@ public class Post {
      * В одном объявлении может быть несколько
      * фотографий.
      */
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id")
     private List<File> files = new ArrayList<>();
@@ -93,6 +90,7 @@ public class Post {
      * Связь unidirectional, т.к. в {@link User}
      * нет коллекции объявлений.
      */
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "participates",

@@ -92,7 +92,6 @@ public class PostRepositoryImpl implements PostRepository {
         return crudRepository.query(hql, Post.class,
                 Map.of("brand", brand)
         );
-
     }
 
     /**
@@ -103,6 +102,7 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Post create(Post post) {
         crudRepository.run(session -> session.persist(post));
+        System.out.println();
         return post;
     }
 

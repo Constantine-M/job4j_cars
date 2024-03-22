@@ -20,4 +20,10 @@ public class EngineRepositoryImpl implements EngineRepository {
     public Collection<Engine> findAll() {
         return crudRepository.query("FROM Engine engine", Engine.class);
     }
+
+    @Override
+    public Engine save(Engine engine) {
+        crudRepository.run(session -> session.persist(engine));
+        return engine;
+    }
 }

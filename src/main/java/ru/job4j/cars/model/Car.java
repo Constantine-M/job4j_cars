@@ -20,6 +20,7 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Car {
 
     @Id
@@ -50,6 +51,7 @@ public class Car {
      * а владелец и ее связь с промежуточной
      * таблицей остается.
      */
+    @Builder.Default
     @OneToMany(mappedBy = "car")
     private List<HistoryOwner> historyOwners = new ArrayList<>();
 }

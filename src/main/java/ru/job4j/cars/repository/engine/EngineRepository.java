@@ -10,4 +10,6 @@ import java.util.Collection;
 public interface EngineRepository {
 
     Collection<Engine> findAll();
+
+    Engine save(Engine engine);
 }
