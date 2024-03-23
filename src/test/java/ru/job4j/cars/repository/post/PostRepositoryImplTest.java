@@ -1,5 +1,6 @@
 package ru.job4j.cars.repository.post;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -7,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.model.*;
+import ru.job4j.cars.repository.car.CarRepository;
+import ru.job4j.cars.repository.engine.EngineRepository;
+import ru.job4j.cars.repository.owner.OwnerRepository;
+import ru.job4j.cars.repository.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,8 +28,20 @@ class PostRepositoryImplTest {
     @Autowired
     private PostRepository postRepository;
 
-    @BeforeAll
-    static void initSession() {
+    @Autowired
+    private EngineRepository engineRepository;
+
+    @Autowired
+    private CarRepository carRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private OwnerRepository ownerRepository;
+
+    @AfterEach
+    void clearTables() {
 
     }
 
@@ -35,13 +52,16 @@ class PostRepositoryImplTest {
         var engine = Engine.builder()
                 .name("300HP")
                 .build();
+        engineRepository.save(engine);
         var car = Car.builder()
                 .name("Nissan")
                 .engine(engine)
                 .build();
+        carRepository.create(car);
         var owner = Owner.builder()
                 .name("Owner")
                 .build();
+        ownerRepository.create(owner);
         var historyOwner = HistoryOwner.builder()
                 .startAt(currentLocalDateTime.minusDays(1))
                 .endAt(currentLocalDateTime)

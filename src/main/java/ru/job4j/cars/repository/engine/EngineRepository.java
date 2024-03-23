@@ -12,4 +12,6 @@ public interface EngineRepository {
     Collection<Engine> findAll();
 
     Engine save(Engine engine);
+
+    Engine findById(int id);
 }
