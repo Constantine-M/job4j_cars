@@ -1,8 +1,10 @@
 package ru.job4j.cars.repository.owner;
 
+import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.model.Owner;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * @author Constantine on 05.03.2024
@@ -14,4 +16,6 @@ public interface OwnerRepository {
     Owner create(Owner owner);
 
     void updateOwner(Owner owner);
+
+    Optional<Owner> findById(int id) throws RepositoryException;
 }

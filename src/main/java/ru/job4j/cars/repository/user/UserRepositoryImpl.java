@@ -12,10 +12,7 @@ import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.CrudRepository;
 
 import javax.persistence.PersistenceException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Чтобы не дублировать весь код CRUD-операций,
@@ -61,7 +58,7 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             crudRepository.run(session -> session.persist(user));
             return user;
-        } catch (HibernateException e) {
+        } catch (PersistenceException e) {
             log.error(Arrays.toString(e.getStackTrace()));
             throw new RepositoryException("Repository exception: duplicate user", e);
         }
@@ -123,23 +120,29 @@ public class UserRepositoryImpl implements UserRepository {
     /**
      * Найти пользователя по ID
      *
+     * В данном методе мы не сможем поймать
+     * исключение и обработать его, т.к.
+     * результат выполнения метода обернут в
+     * {@link Optional}.
+     *
      * @return пользователь.
      */
     public Optional<User> findById(int userId) throws RepositoryException {
-        try {
-            return crudRepository.optional(
-                    "FROM User user WHERE user.id = :fId",
-                    User.class,
-                    Map.of("fId", userId)
-            );
-        } catch (HibernateException e) {
-            log.error(Arrays.toString(e.getStackTrace()));
-            throw new RepositoryException("Repository exception: cant find user", e);
+        var userOptional = crudRepository.optional(
+                "FROM User user WHERE user.id = :fId",
+                User.class,
+                Map.of("fId", userId)
+        );
+        if (userOptional.isEmpty()) {
+            throw new RepositoryException("Repository exception: cant find user with ID = ".concat(String.valueOf(userId)));
         }
+        return userOptional;
     }
 
     /**
-     * Список пользователей по login LIKE %key%
+     * Список пользователей по login LIKE %key%.
+     *
+     * Важно: поиск регистрозависимый!
      *
      * @param key key
      * @return список пользователей.
@@ -160,19 +163,25 @@ public class UserRepositoryImpl implements UserRepository {
     /**
      * Найти пользователя по login.
      *
+     * Важно: поиск регистрозависимый!
+     *
+     * В данном методе мы не сможем поймать
+     * исключение и обработать его, т.к.
+     * результат выполнения метода обернут в
+     * {@link Optional}.
+     *
      * @param login login.
      * @return Optional or user.
      */
     public Optional<User> findByLogin(String login) throws RepositoryException {
-        try {
-            return crudRepository.optional(
-                    "FROM User user WHERE user.login = :fLogin",
-                    User.class,
-                    Map.of("fLogin", login)
-            );
-        } catch (HibernateException e) {
-            log.error(Arrays.toString(e.getStackTrace()));
-            throw new RepositoryException("Repository exception: cant find user by login", e);
+        var userOptional = crudRepository.optional(
+                "FROM User user WHERE user.login = :fLogin",
+                User.class,
+                Map.of("fLogin", login)
+        );
+        if (userOptional.isEmpty()) {
+            throw new RepositoryException("Repository exception: cant find user by login = ".concat(String.valueOf(login)));
         }
+        return userOptional;
     }
 }
