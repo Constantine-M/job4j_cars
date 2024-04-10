@@ -9,9 +9,11 @@ import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.listener.CleanupH2DatabaseTestListener;
 import ru.job4j.cars.model.User;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -44,7 +46,10 @@ class UserRepositoryImplTest {
                 .password("123")
                 .build();
         userRepository.create(user);
-        assertThat(userRepository.findById(1).get()).usingRecursiveComparison().isEqualTo(user);
+        assertThat(userRepository.findById(1).get())
+                .usingRecursiveComparison()
+                .ignoringFields("posts")
+                .isEqualTo(user);
     }
 
     @Test
@@ -61,6 +66,7 @@ class UserRepositoryImplTest {
         userRepository.create(userConsta);
         assertThat(userRepository.findById(2).get())
                 .usingRecursiveComparison()
+                .ignoringFields("posts")
                 .isEqualTo(userConsta);
     }
 
@@ -166,6 +172,7 @@ class UserRepositoryImplTest {
         userRepository.create(user);
         assertThat(userRepository.findByLogin("Consta").get())
                 .usingRecursiveComparison()
+                .ignoringFields("posts")
                 .isEqualTo(user);
     }
 

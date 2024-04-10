@@ -38,6 +38,6 @@ public class Owner {
      * а у владельца несколько машин.
      */
     @Builder.Default
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<HistoryOwner> historyOwners = new ArrayList<>();
 }

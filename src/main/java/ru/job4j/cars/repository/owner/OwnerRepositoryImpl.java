@@ -29,10 +29,14 @@ public class OwnerRepositoryImpl implements OwnerRepository {
      */
     @Override
     public Collection<Owner> findAll() {
+        String hql1 = """
+                    SELECT DISTINCT owner
+                    FROM Owner owner
+                    JOIN FETCH owner.historyOwners
+                    """;
         String hql = """
                     SELECT DISTINCT owner
                     FROM Owner owner
-                    JOIN FETCH owner.cars
                     """;
         return crudRepository.query(hql, Owner.class);
     }

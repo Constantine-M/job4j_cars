@@ -25,6 +25,7 @@ public class File {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Include
     private int id;
 
     private String name;
@@ -34,6 +35,5 @@ public class File {
      * доменным объектом и объектом
      * {@link FileDto}.
      */
-    @Include
     private String path;
 }

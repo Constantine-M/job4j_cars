@@ -52,6 +52,6 @@ public class Car {
      * таблицей остается.
      */
     @Builder.Default
-    @OneToMany(mappedBy = "car")
+    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL)
     private List<HistoryOwner> historyOwners = new ArrayList<>();
 }

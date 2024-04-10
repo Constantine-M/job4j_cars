@@ -49,4 +49,14 @@ public class HistoryOwner {
 
     @Column(name = "end_at")
     private LocalDateTime endAt = LocalDateTime.now(ZoneId.of("UTC"));
+
+    public void setCar(Car car) {
+        this.car = car;
+        this.car.getHistoryOwners().add(this);
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+        this.owner.getHistoryOwners().add(this);
+    }
 }

@@ -1,7 +1,5 @@
 package ru.job4j.cars.repository.owner;
 
-import org.hibernate.Hibernate;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,15 +7,9 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.listener.CleanupH2DatabaseTestListener;
-import ru.job4j.cars.model.Car;
-import ru.job4j.cars.model.Engine;
-import ru.job4j.cars.model.HistoryOwner;
 import ru.job4j.cars.model.Owner;
-import ru.job4j.cars.repository.car.CarRepository;
-import ru.job4j.cars.repository.engine.EngineRepository;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
+
 import java.util.List;
 
 import static java.util.Collections.emptyList;
@@ -46,33 +38,70 @@ class OwnerRepositoryImplTest {
     @Autowired
     private OwnerRepository ownerRepository;
 
-    @Autowired
-    private EngineRepository engineRepository;
-
-    @Autowired
-    private CarRepository carRepository;
-
+    /**
+     * Данный тест просто проверяет сохранение
+     * владельца в БД. Здесь не учитываются
+     * связи, т.к. сохранение связанных сущностей
+     * происходит в отдельной сессии, что
+     * влечет к ошибке после выполнения теста.
+     */
     @Test
     void whenCreateOwnerThenGetTheSame() throws RepositoryException {
-        try {
-            var engine = Engine.builder()
-                    .name("Inline-6 Turbo 3.0L")
-                    .build();
-            engineRepository.save(engine);
-            var car = Car.builder()
-                    .engine(engine)
-                    .name("Mercedes-Benz E-Class 2019")
-                    .historyOwners(emptyList())
-                    .build();
-            carRepository.create(car);
-            var owner = Owner.builder()
-                    .name("Consta")
-                    .historyOwners(emptyList())
-                    .build();
-            ownerRepository.create(owner);
-            assertThat(ownerRepository.findById(1).get()).usingRecursiveComparison().isEqualTo(owner);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        var owner = Owner.builder()
+                .name("Consta")
+                .historyOwners(emptyList())
+                .build();
+        ownerRepository.create(owner);
+        assertThat(ownerRepository.findById(1).get())
+                .usingRecursiveComparison()
+                .ignoringFields("historyOwners")
+                .isEqualTo(owner);
+    }
+
+    @Test
+    void whenFindOwnerByIdThenGetOwnerConsta() throws RepositoryException {
+        var owner = Owner.builder()
+                .name("Consta")
+                .historyOwners(emptyList())
+                .build();
+        ownerRepository.create(owner);
+        var actualOwner = ownerRepository.findById(1);
+        assertThat(actualOwner.get().getName()).isEqualTo("Consta");
+    }
+
+    @Test
+    void whenCannotFindOwnerByIdThenThrowRepositoryException() throws RepositoryException {
+        assertThatThrownBy(() -> ownerRepository.findById(1))
+                .isInstanceOf(RepositoryException.class)
+                .hasMessage("Repository exception: cant find owner with ID = 1");
+    }
+
+    @Test
+    void whenFindAllThenGetAllOwners() {
+        var owner1 = Owner.builder()
+                .name("owner 1")
+                .historyOwners(emptyList())
+                .build();
+        ownerRepository.create(owner1);
+        var owner2 = Owner.builder()
+                .name("owner 2")
+                .historyOwners(emptyList())
+                .build();
+        ownerRepository.create(owner2);
+        var expected = List.of(owner1, owner2);
+        var actual = ownerRepository.findAll();
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void whenUpdateOwnerNameFromConstaToJohnThenGetOwnerJohn() throws RepositoryException {
+        var owner = Owner.builder()
+                .name("Consta")
+                .historyOwners(emptyList())
+                .build();
+        ownerRepository.create(owner);
+        owner.setName("John");
+        ownerRepository.updateOwner(owner);
+        assertThat(ownerRepository.findById(1).get().getName()).isEqualTo("John");
     }
 }

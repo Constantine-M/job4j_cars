@@ -115,7 +115,7 @@ public class PostRepositoryImpl implements PostRepository {
     public Optional<Post> findById(int id) throws RepositoryException {
         var hql = """
                 FROM Post post 
-                JOIN FETCH post.priceHistory JOIN FETCH post.users JOIN FETCH post.files
+                JOIN FETCH post.priceHistory JOIN FETCH post.files
                 WHERE post.id = :fId
                 """;
         try {

@@ -35,6 +35,12 @@ public class CleanupH2DatabaseTestListener implements TestExecutionListener, Ord
         cleanupDatabase(testContext);
     }
 
+    @Override
+    public void afterTestClass(TestContext testContext) throws Exception {
+        TestExecutionListener.super.afterTestClass(testContext);
+        cleanupDatabase(testContext);
+    }
+
     /**
      * Данный метод по сути вызывает непосредственно
      * сервис очистки тестовой БД H2.
