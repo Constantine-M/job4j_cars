@@ -33,7 +33,8 @@ public class PostRepositoryImpl implements PostRepository {
         String hql = """
                     SELECT DISTINCT post
                     FROM Post post
-                    JOIN FETCH post.priceHistory JOIN FETCH post.users JOIN FETCH post.files
+                    JOIN FETCH post.priceHistory
+                    JOIN FETCH post.files
                     """;
         return crudRepository.query(hql, Post.class);
     }
@@ -47,7 +48,8 @@ public class PostRepositoryImpl implements PostRepository {
         String hql = """
                     SELECT DISTINCT post
                     FROM Post post
-                    JOIN FETCH post.priceHistory JOIN FETCH post.users JOIN FETCH post.files
+                    JOIN FETCH post.priceHistory
+                    JOIN FETCH post.files
                     WHERE post.created BETWEEN :startDay AND :endDay
                     """;
         var localDateTimeAtUTCZone = LocalDateTime.now(ZoneId.of("UTC"));
@@ -66,7 +68,8 @@ public class PostRepositoryImpl implements PostRepository {
         String hql = """
                     SELECT DISTINCT post
                     FROM Post post
-                    JOIN FETCH post.priceHistory JOIN FETCH post.users JOIN FETCH post.files
+                    JOIN FETCH post.priceHistory
+                    JOIN FETCH post.files
                     WHERE post.files <> ''
                     """;
         return crudRepository.query(hql, Post.class);
@@ -85,9 +88,10 @@ public class PostRepositoryImpl implements PostRepository {
     public Collection<Post> findAllByName(String brand) {
         String hql = """
                     SELECT DISTINCT post
-                    FROM Post post, Car car
-                    JOIN FETCH post.priceHistory JOIN FETCH post.users JOIN FETCH post.files
-                    WHERE post.car = car AND car.name = :brand
+                    FROM Post post
+                    JOIN FETCH post.priceHistory
+                    JOIN FETCH post.files
+                    WHERE post.car.name = :brand
                     """;
         return crudRepository.query(hql, Post.class,
                 Map.of("brand", brand)
@@ -102,7 +106,6 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Post create(Post post) {
         crudRepository.run(session -> session.persist(post));
-        System.out.println();
         return post;
     }
 
@@ -114,14 +117,13 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Optional<Post> findById(int id) throws RepositoryException {
         var hql = """
-                FROM Post post 
-                JOIN FETCH post.priceHistory JOIN FETCH post.files
+                FROM Post post
+                JOIN FETCH post.priceHistory
+                JOIN FETCH post.files
                 WHERE post.id = :fId
                 """;
         try {
-            return crudRepository.optional(hql, Post.class,
-                    Map.of("fId", id)
-            );
+            return crudRepository.optional(hql, Post.class, Map.of("fId", id));
         } catch (HibernateException e) {
             log.error(Arrays.toString(e.getStackTrace()));
             throw new RepositoryException("Repository exception: cant find post.", e);

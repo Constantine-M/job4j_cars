@@ -23,20 +23,12 @@ public class OwnerRepositoryImpl implements OwnerRepository {
     /**
      * Найти всех владельцев.
      *
-     * Как найти всех владельцев определенной машины?
-     *
      * @return список владельцев машин
      */
     @Override
     public Collection<Owner> findAll() {
-        String hql1 = """
-                    SELECT DISTINCT owner
-                    FROM Owner owner
-                    JOIN FETCH owner.historyOwners
-                    """;
         String hql = """
-                    SELECT DISTINCT owner
-                    FROM Owner owner
+                    FROM Owner owner ORDER BY owner.name ASC
                     """;
         return crudRepository.query(hql, Owner.class);
     }

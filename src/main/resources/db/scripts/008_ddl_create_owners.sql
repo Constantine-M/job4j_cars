@@ -2,5 +2,7 @@ CREATE TABLE owners
 (
     id SERIAL PRIMARY KEY,
     name VARCHAR(64),
-    history_id INT NOT NULL REFERENCES history(id)
+    start_ownership TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    end_ownership TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    auto_passport_id INT REFERENCES auto_passport(id)
 );

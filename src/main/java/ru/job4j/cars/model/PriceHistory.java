@@ -20,6 +20,7 @@ import java.time.ZoneId;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class PriceHistory {
 
     @Id
@@ -33,10 +34,4 @@ public class PriceHistory {
 
     private LocalDateTime created = LocalDateTime.now(ZoneId.of("UTC"));
 
-    public PriceHistory(int id, Long before, Long after, LocalDateTime created) {
-        this.id = id;
-        this.before = before;
-        this.after = after;
-        this.created = created;
-    }
 }

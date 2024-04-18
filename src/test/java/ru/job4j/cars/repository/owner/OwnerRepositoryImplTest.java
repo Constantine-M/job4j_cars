@@ -1,5 +1,6 @@
 package ru.job4j.cars.repository.owner;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,9 +11,10 @@ import ru.job4j.cars.listener.CleanupH2DatabaseTestListener;
 import ru.job4j.cars.model.Owner;
 
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -49,7 +51,8 @@ class OwnerRepositoryImplTest {
     void whenCreateOwnerThenGetTheSame() throws RepositoryException {
         var owner = Owner.builder()
                 .name("Consta")
-                .historyOwners(emptyList())
+                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
         ownerRepository.create(owner);
         assertThat(ownerRepository.findById(1).get())
@@ -62,7 +65,8 @@ class OwnerRepositoryImplTest {
     void whenFindOwnerByIdThenGetOwnerConsta() throws RepositoryException {
         var owner = Owner.builder()
                 .name("Consta")
-                .historyOwners(emptyList())
+                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
         ownerRepository.create(owner);
         var actualOwner = ownerRepository.findById(1);
@@ -80,12 +84,14 @@ class OwnerRepositoryImplTest {
     void whenFindAllThenGetAllOwners() {
         var owner1 = Owner.builder()
                 .name("owner 1")
-                .historyOwners(emptyList())
+                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
         ownerRepository.create(owner1);
         var owner2 = Owner.builder()
+                .start(LocalDateTime.now().minusDays(5).truncatedTo(ChronoUnit.MINUTES))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .name("owner 2")
-                .historyOwners(emptyList())
                 .build();
         ownerRepository.create(owner2);
         var expected = List.of(owner1, owner2);
@@ -97,7 +103,8 @@ class OwnerRepositoryImplTest {
     void whenUpdateOwnerNameFromConstaToJohnThenGetOwnerJohn() throws RepositoryException {
         var owner = Owner.builder()
                 .name("Consta")
-                .historyOwners(emptyList())
+                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
         ownerRepository.create(owner);
         owner.setName("John");

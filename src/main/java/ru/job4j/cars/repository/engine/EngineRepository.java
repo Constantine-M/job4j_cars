@@ -14,4 +14,6 @@ public interface EngineRepository {
     Engine save(Engine engine);
 
     Engine findById(int id);
+
+    void updateEngine(Engine engine);
 }

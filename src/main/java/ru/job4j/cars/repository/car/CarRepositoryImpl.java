@@ -20,25 +20,6 @@ public class CarRepositoryImpl implements CarRepository {
 
     private final CrudRepository crudRepository;
 
-    /**
-     * Найти все машины.
-     *
-     * @return список всех машин
-     */
-    @Override
-    public Collection<Car> findAll() {
-        String hql1 = """
-                    SELECT DISTINCT car
-                    FROM Car car
-                    JOIN FETCH car.historyOwners
-                    """;
-        String hql = """
-                    SELECT DISTINCT car
-                    FROM Car car
-                    """;
-        return crudRepository.query(hql, Car.class);
-
-    }
 
     /**
      * Сохранить машину.
@@ -56,9 +37,12 @@ public class CarRepositoryImpl implements CarRepository {
 
     @Override
     public Optional<Car> findById(int id) throws RepositoryException {
-        var carOptional = crudRepository.optional(
-                "FROM Car car WHERE car.id = :fId",
-                Car.class,
+        String hql = """
+                    FROM Car car
+                    JOIN FETCH car.passport.owners
+                    WHERE car.id = :fId
+                    """;
+        var carOptional = crudRepository.optional(hql, Car.class,
                 Map.of("fId", id)
         );
         if (carOptional.isEmpty()) {

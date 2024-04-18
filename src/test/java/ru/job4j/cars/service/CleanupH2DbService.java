@@ -38,7 +38,6 @@ public class CleanupH2DbService {
             if (isH2Database(connection)) {
                 disableConstraints(statement);
                 truncateTables(statement, schemaName);
-//                resetSequences(statement, schemaName);
                 enableConstraints(statement);
             } else {
                 log.warn("Skipping cleaning up database, because it's not H2 database");

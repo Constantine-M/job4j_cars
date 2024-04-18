@@ -1,5 +1,6 @@
 package ru.job4j.cars.repository.engine;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +39,9 @@ class EngineRepositoryImplTest {
     @Test
     void whenSaveEngineThenGetTheSame() {
         var engine = Engine.builder()
-                .name("Inline-4 Turbo 1.5L")
+                .type("gasoline")
+                .capacity(1.5F)
+                .horsePower(110)
                 .build();
         engineRepository.save(engine);
         assertThat(engineRepository.findById(1)).usingRecursiveComparison().isEqualTo(engine);
@@ -47,10 +50,14 @@ class EngineRepositoryImplTest {
     @Test
     void whenSaveTwoEnginesThenGetListOfTwoEngines() {
         var engine1 = Engine.builder()
-                .name("Inline-4 Turbo 1.5L")
+                .type("gasoline")
+                .capacity(1.5F)
+                .horsePower(120)
                 .build();
         var engine2 = Engine.builder()
-                .name("V6 3.0L")
+                .type("gasoline")
+                .capacity(3F)
+                .horsePower(180)
                 .build();
         var expected = List.of(engine1, engine2);
         engineRepository.save(engine1);
@@ -59,12 +66,16 @@ class EngineRepositoryImplTest {
     }
 
     @Test
-    void whenFindById2ThenGetV6Engine() {
+    void whenFindById2ThenGet3LEngine() {
         var engine1 = Engine.builder()
-                .name("Inline-4 Turbo 1.5L")
+                .type("gasoline")
+                .capacity(1F)
+                .horsePower(65)
                 .build();
         var engine2 = Engine.builder()
-                .name("V6 3.0L")
+                .type("gasoline")
+                .capacity(3F)
+                .horsePower(210)
                 .build();
         engineRepository.save(engine1);
         engineRepository.save(engine2);

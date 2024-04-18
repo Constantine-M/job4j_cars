@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode.Include;
 import javax.persistence.*;
 
 /**
- * Модель описывает двигатель авто,
- * который выставлен на продажу.
+ * Модель описывает характеристики двигателя
+ * авто, который выставлен на продажу.
  *
  * @author Constantine on 03.03.2024
  */
@@ -26,6 +26,11 @@ public class Engine {
     @Include
     private int id;
 
-    @Include
-    private String name;
+    /** Тип двигателя - бензин, дизель, электро.. */
+    private String type;
+
+    private float capacity;
+
+    @Column(name = "horsepower")
+    private int horsePower;
 }

@@ -2,16 +2,25 @@ package ru.job4j.cars.model;
 
 import lombok.*;
 import lombok.EqualsAndHashCode.Include;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Модель описывает владельца авто.
+ * Здесь также указывается инфомарция
+ * о том, когда он начал владеть машиной
+ * и когда перестал владеть (машина
+ * была продана например).
  *
  * @author Constantine on 03.03.2024
  */
+@DynamicUpdate
 @Builder
 @Entity
 @Table(name = "owners")
@@ -27,17 +36,11 @@ public class Owner {
     @Include
     private int id;
 
-    @Include
     private String name;
 
-    /**
-     * Связь между машинами и владельцами
-     * будет двухсторонней.
-     *
-     * У машины может быть несколько владельцев,
-     * а у владельца несколько машин.
-     */
-    @Builder.Default
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-    private List<HistoryOwner> historyOwners = new ArrayList<>();
+    @Column(name = "start_ownership", updatable = false)
+    private LocalDateTime start;
+
+    @Column(name = "end_ownership", updatable = false)
+    private LocalDateTime end;
 }

@@ -5,8 +5,11 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static lombok.EqualsAndHashCode.*;
 
@@ -31,10 +34,15 @@ public class Post {
     @Include
     private int id;
 
+    private String title;
+
     private String description;
 
     @Column(updatable = false)
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now(ZoneId.of("UTC"));
+
+    /** Продано или нет */
+    private boolean sold;
 
     private Long price;
 
@@ -66,12 +74,7 @@ public class Post {
     @JoinColumn(name = "auto_post_id")
     private List<PriceHistory> priceHistory = new ArrayList<>();
 
-    /**
-     * В одном объявлении может быть несколько
-     * фотографий.
-     */
-    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id")
-    private List<File> files = new ArrayList<>();
+    private Set<File> files = new HashSet<>();
 }

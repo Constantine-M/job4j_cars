@@ -5,7 +5,9 @@ import lombok.EqualsAndHashCode.Include;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Модель описывает автомобиль,
@@ -29,7 +31,12 @@ public class Car {
     private int id;
 
     @Include
-    private String name;
+    private String model;
+
+    private String color;
+
+    /** Пробег автомобиля */
+    private int mileage;
 
     /**
      * Связь one to one - у одной машины
@@ -41,17 +48,12 @@ public class Car {
     @JoinColumn(name = "engine_id")
     private Engine engine;
 
-    /**
-     * В проекте будет двухсторонняя связь
-     * ManyToMany между авто и владельцами.
-     *
-     * Главным в этой связи будет Car. Т.е.
-     * при удалении Car, удаляется также и
-     * связь между Car и промежуточной таблицей,
-     * а владелец и ее связь с промежуточной
-     * таблицей остается.
-     */
-    @Builder.Default
-    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL)
-    private List<HistoryOwner> historyOwners = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "body_id")
+//    @Column(name = "body_id")
+    private Body body;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "auto_passport_id")
+    private AutoPassport passport;
 }

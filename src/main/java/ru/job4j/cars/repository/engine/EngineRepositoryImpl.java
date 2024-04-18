@@ -38,4 +38,9 @@ public class EngineRepositoryImpl implements EngineRepository {
                 Map.of("fId", id));
         return engineOpt.get();
     }
+
+    @Override
+    public void updateEngine(Engine engine) {
+        crudRepository.run(session -> session.update(engine));
+    }
 }

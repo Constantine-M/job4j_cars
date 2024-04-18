@@ -1,5 +1,6 @@
 package ru.job4j.cars.repository.car;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,13 +8,13 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.listener.CleanupH2DatabaseTestListener;
-import ru.job4j.cars.model.Car;
-import ru.job4j.cars.model.Engine;
+import ru.job4j.cars.model.*;
 
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -35,33 +36,67 @@ class CarRepositoryImplTest {
      */
     @Test
     void whenCreateCarThenGetTheSame() throws RepositoryException {
+        var owner = Owner.builder()
+                .name("owner")
+                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
+                .build();
         var engine = Engine.builder()
-                .name("Engine")
+                .type("diesel")
+                .capacity(6.5F)
+                .horsePower(280)
+                .build();
+        var body = Body.builder()
+                .body("pickup")
+                .build();
+        var passport = AutoPassport.builder()
+                .original(true)
+                .owners(Set.of(owner))
                 .build();
         var car = Car.builder()
-                .engine(engine)
-                .name("Fast & Furious")
-                .historyOwners(emptyList())
+                .color("red")
+                .model("Ford F150")
+                .mileage(88000)
                 .build();
+        car.setBody(body);
+        car.setEngine(engine);
+        car.setPassport(passport);
         carRepository.create(car);
-        assertThat(carRepository.findById(1).get())
+        var actual = carRepository.findById(car.getId()).get();
+        assertThat(actual)
                 .usingRecursiveComparison()
-                .ignoringFields("historyOwners")
                 .isEqualTo(car);
     }
 
     @Test
     void whenFindCarByIdThenGetCarWithNameAudi() throws RepositoryException {
+        var owner = Owner.builder()
+                .name("owner")
+                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
+                .build();
         var engine = Engine.builder()
-                .name("Engine")
+                .type("gasoline")
+                .capacity(6.5F)
+                .horsePower(280)
+                .build();
+        var body = Body.builder()
+                .body("sedan")
+                .build();
+        var passport = AutoPassport.builder()
+                .original(true)
+                .owners(Set.of(owner))
                 .build();
         var car = Car.builder()
+                .color("orange")
+                .model("Audi")
+                .mileage(64000)
                 .engine(engine)
-                .name("Audi")
-                .historyOwners(emptyList())
+                .body(body)
+                .passport(passport)
                 .build();
         carRepository.create(car);
-        assertThat(carRepository.findById(1).get().getName()).isEqualTo("Audi");
+        assertThat(carRepository.findById(1).get().getModel()).isEqualTo("Audi");
     }
 
     @Test
@@ -73,40 +108,34 @@ class CarRepositoryImplTest {
 
     @Test
     void whenUpdateCarNameThenGetGeely() throws RepositoryException {
+        var owner = Owner.builder()
+                .name("owner")
+                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
+                .build();
         var engine = Engine.builder()
-                .name("Engine")
+                .type("gasoline")
+                .capacity(1.5F)
+                .horsePower(130)
+                .build();
+        var body = Body.builder()
+                .body("SUV")
+                .build();
+        var passport = AutoPassport.builder()
+                .original(true)
+                .owners(Set.of(owner))
                 .build();
         var car = Car.builder()
+                .color("blue")
+                .model("Audi")
+                .mileage(5000)
                 .engine(engine)
-                .name("Audi")
-                .historyOwners(emptyList())
+                .body(body)
+                .passport(passport)
                 .build();
         carRepository.create(car);
-        car.setName("Geely");
+        car.setModel("Geely");
         carRepository.updateCar(car);
-        assertThat(carRepository.findById(1).get().getName()).isEqualTo("Geely");
-    }
-
-    @Test
-    void whenFindAllCarsThenGetListOfCarsWithAudiAndGeely() {
-        var engine1 = Engine.builder()
-                .name("Engine1")
-                .build();
-        var engine2 = Engine.builder()
-                .name("Engine2")
-                .build();
-        var car1 = Car.builder()
-                .engine(engine1)
-                .name("Audi")
-                .build();
-        carRepository.create(car1);
-        var car2 = Car.builder()
-                .engine(engine2)
-                .name("Geely")
-                .build();
-        carRepository.create(car2);
-        var actual = carRepository.findAll();
-        var expected = List.of(car1, car2);
-        assertThat(actual).isEqualTo(expected);
+        assertThat(carRepository.findById(1).get().getModel()).isEqualTo("Geely");
     }
 }
