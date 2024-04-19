@@ -1,6 +1,7 @@
 package ru.job4j.cars.repository.car;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.model.Car;
@@ -14,6 +15,7 @@ import java.util.Optional;
 /**
  * @author Constantine on 05.03.2024
  */
+@Slf4j
 @AllArgsConstructor
 @Repository
 public class CarRepositoryImpl implements CarRepository {
@@ -46,6 +48,7 @@ public class CarRepositoryImpl implements CarRepository {
                 Map.of("fId", id)
         );
         if (carOptional.isEmpty()) {
+            log.error("Car with ID = {} not found", id);
             throw new RepositoryException("Repository exception: cant find car with ID = ".concat(String.valueOf(id)));
         }
         return carOptional;

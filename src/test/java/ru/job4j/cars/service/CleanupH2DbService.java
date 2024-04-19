@@ -45,6 +45,21 @@ public class CleanupH2DbService {
         }
     }
 
+    @SneakyThrows
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void dropTables(String schemaName) {
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement()) {
+            if (isH2Database(connection)) {
+                disableConstraints(statement);
+                dropAllTables(statement, schemaName);
+                enableConstraints(statement);
+            } else {
+                log.warn("Skipping cleaning up database, because it's not H2 database");
+            }
+        }
+    }
+
     /**
      * Метод ДОЛЖЕН сбрасывать последовательность
      * в таблице, чтобы после очистки таблицы
@@ -70,6 +85,11 @@ public class CleanupH2DbService {
     private void truncateTables(Statement statement, String schemaName) {
         getSchemaTables(statement, schemaName)
                 .forEach(tableName -> executeStatement(statement, "TRUNCATE TABLE " + tableName + " RESTART IDENTITY"));
+    }
+
+    private void dropAllTables(Statement statement, String schemaName) {
+        getSchemaTables(statement, schemaName)
+                .forEach(tableName -> executeStatement(statement, "DROP TABLE " + tableName));
     }
 
     /**

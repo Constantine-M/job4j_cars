@@ -38,7 +38,7 @@ public class CleanupH2DatabaseTestListener implements TestExecutionListener, Ord
     @Override
     public void afterTestClass(TestContext testContext) throws Exception {
         TestExecutionListener.super.afterTestClass(testContext);
-        cleanupDatabase(testContext);
+        dropDatabase(testContext);
     }
 
     /**
@@ -56,6 +56,13 @@ public class CleanupH2DatabaseTestListener implements TestExecutionListener, Ord
         CleanupH2DbService cleanupH2DbService = testContext.getApplicationContext().getBean(CleanupH2DbService.class);
         cleanupH2DbService.cleanup(H2_SCHEMA_NAME);
         log.info("Cleaning up database end");
+    }
+
+    private void dropDatabase(TestContext testContext) {
+        log.info("Drop database tables begin");
+        CleanupH2DbService cleanupH2DbService = testContext.getApplicationContext().getBean(CleanupH2DbService.class);
+        cleanupH2DbService.cleanup(H2_SCHEMA_NAME);
+        log.info("Dropping tables end");
     }
 
     @Override

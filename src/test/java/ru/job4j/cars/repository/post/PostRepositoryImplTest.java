@@ -1,6 +1,5 @@
 package ru.job4j.cars.repository.post;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -137,9 +136,8 @@ class PostRepositoryImplTest {
                 .isEqualTo("Granta");
     }
 
-    @Disabled
     @Test
-    void whenCannotFindTheCarThenThrowsRepositoryException() {
+    void whenCannotFindThePostWithIdEqualsTo3ThenThrowsRepositoryException() {
         var currentLocalDateTime = LocalDateTime.now(ZoneId.of("UTC")).truncatedTo(ChronoUnit.MINUTES);
         var file = File.builder()
                 .name("Test car")
@@ -162,7 +160,7 @@ class PostRepositoryImplTest {
         postRepository.create(post);
         assertThatThrownBy(() -> postRepository.findById(3))
                 .isInstanceOf(RepositoryException.class)
-                .hasMessage("Repository exception: cant find post.");
+                .hasMessage("Post with id = 3 not found");
     }
 
     @Test
