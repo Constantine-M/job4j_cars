@@ -38,7 +38,7 @@ public class CleanupH2DatabaseTestListener implements TestExecutionListener, Ord
     @Override
     public void afterTestClass(TestContext testContext) throws Exception {
         TestExecutionListener.super.afterTestClass(testContext);
-        dropDatabase(testContext);
+        cleanupDatabase(testContext);
     }
 
     /**

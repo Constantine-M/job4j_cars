@@ -1,4 +1,4 @@
-create table auto_post
+CREATE TABLE IF NOT EXISTS auto_post
 (
     id           serial PRIMARY KEY,
     title        VARCHAR(96),

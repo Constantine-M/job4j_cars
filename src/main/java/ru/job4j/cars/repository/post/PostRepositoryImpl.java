@@ -122,12 +122,12 @@ public class PostRepositoryImpl implements PostRepository {
                 JOIN FETCH post.files
                 WHERE post.id = :fId
                 """;
-        var postOptional = crudRepository.optional(hql, Post.class, Map.of("fId", id));
-        if (postOptional.isEmpty()) {
+        try {
+            return crudRepository.optional(hql, Post.class, Map.of("fId", id));
+        } catch (HibernateException e) {
             log.error("No post found with id {}", id);
             throw new RepositoryException("Post with id = " + id + " not found");
         }
-        return postOptional;
     }
 
     @Override

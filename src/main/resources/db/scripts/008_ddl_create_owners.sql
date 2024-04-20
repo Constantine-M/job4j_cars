@@ -1,4 +1,4 @@
-CREATE TABLE owners
+CREATE TABLE IF NOT EXISTS owners
 (
     id SERIAL PRIMARY KEY,
     name VARCHAR(64),
