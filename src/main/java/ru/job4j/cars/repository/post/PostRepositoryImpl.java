@@ -49,13 +49,12 @@ public class PostRepositoryImpl implements PostRepository {
                     SELECT DISTINCT post
                     FROM Post post
                     JOIN FETCH post.priceHistory
-                    JOIN FETCH post.files
-                    WHERE post.created BETWEEN :startDay AND :endDay
+                    LEFT JOIN FETCH post.files
+                    WHERE post.created > :lastTime
                     """;
         var localDateTimeAtUTCZone = LocalDateTime.now(ZoneId.of("UTC"));
         return crudRepository.query(hql, Post.class,
-                Map.of("startDay", localDateTimeAtUTCZone.minusDays(1),
-                        "endDay", localDateTimeAtUTCZone)
+                Map.of("lastTime", localDateTimeAtUTCZone.minusDays(1))
         );
     }
 
@@ -70,7 +69,7 @@ public class PostRepositoryImpl implements PostRepository {
                     FROM Post post
                     JOIN FETCH post.priceHistory
                     JOIN FETCH post.files
-                    WHERE post.files <> ''
+                    WHERE size(post.files) <> 0
                     """;
         return crudRepository.query(hql, Post.class);
     }
@@ -79,22 +78,22 @@ public class PostRepositoryImpl implements PostRepository {
      * Найти все объявления определенной марки.
      *
      * Поиск будет осуществляться по полю name
-     * в {@link Car}, по полному совпадению.
+     * в {@link Car}, по частичному совпадению.
      *
-     * @param brand марка авто.
+     * @param model марка авто.
      * @return список объявлений по продаже авто
      * определенной марки.
      */
-    public Collection<Post> findAllByName(String brand) {
+    public Collection<Post> findAllByName(String model) {
         String hql = """
                     SELECT DISTINCT post
                     FROM Post post
                     JOIN FETCH post.priceHistory
-                    JOIN FETCH post.files
-                    WHERE post.car.name = :brand
+                    LEFT JOIN FETCH post.files
+                    WHERE post.car.model LIKE :brand
                     """;
         return crudRepository.query(hql, Post.class,
-                Map.of("brand", brand)
+                Map.of("brand", "%" + model + "%")
         );
     }
 

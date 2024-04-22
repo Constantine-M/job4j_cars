@@ -30,6 +30,7 @@ public class Car {
     @Include
     private int id;
 
+    /** Марка авто */
     @Include
     private String model;
 
