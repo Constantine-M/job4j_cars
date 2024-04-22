@@ -1,6 +1,5 @@
 package ru.job4j.cars.repository.car;
 
-import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.model.Car;
 
 import java.util.Optional;
@@ -14,5 +13,5 @@ public interface CarRepository {
 
     void updateCar(Car car);
 
-    Optional<Car> findById(int id) throws RepositoryException;
+    Optional<Car> findById(int id);
 }

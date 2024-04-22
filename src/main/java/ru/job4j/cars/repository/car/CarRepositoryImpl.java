@@ -38,19 +38,12 @@ public class CarRepositoryImpl implements CarRepository {
     }
 
     @Override
-    public Optional<Car> findById(int id) throws RepositoryException {
+    public Optional<Car> findById(int id) {
         String hql = """
                     FROM Car car
                     JOIN FETCH car.passport.owners
                     WHERE car.id = :fId
                     """;
-        var carOptional = crudRepository.optional(hql, Car.class,
-                Map.of("fId", id)
-        );
-        if (carOptional.isEmpty()) {
-            log.error("Car with ID = {} not found", id);
-            throw new RepositoryException("Repository exception: cant find car with ID = ".concat(String.valueOf(id)));
-        }
-        return carOptional;
+        return crudRepository.optional(hql, Car.class, Map.of("fId", id));
     }
 }

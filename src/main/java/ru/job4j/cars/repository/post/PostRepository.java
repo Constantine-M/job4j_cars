@@ -15,7 +15,7 @@ public interface PostRepository {
 
     Post create(Post post);
 
-    Optional<Post> findById(int id) throws RepositoryException;
+    Optional<Post> findById(int id);
 
     void updatePost(Post post);
 

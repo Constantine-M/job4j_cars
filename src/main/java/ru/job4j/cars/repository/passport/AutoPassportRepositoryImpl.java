@@ -27,7 +27,7 @@ public class AutoPassportRepositoryImpl  implements AutoPassportRepository {
      *
      * Т.к. у нас ограничение в БД (NOT NULL),
      * то проверку на пустой Optional не делаю.
-     * Пспорт всегда должен быть.
+     * Паспорт всегда должен быть.
      *
      * @param id идентификатор
      * @return паспорт ТС

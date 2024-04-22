@@ -115,19 +115,14 @@ public class PostRepositoryImpl implements PostRepository {
      * @param id идентификатор объявления
      */
     @Override
-    public Optional<Post> findById(int id) throws RepositoryException {
+    public Optional<Post> findById(int id) {
         var hql = """
                 FROM Post post
                 JOIN FETCH post.priceHistory
                 JOIN FETCH post.files
                 WHERE post.id = :fId
                 """;
-        try {
-            return crudRepository.optional(hql, Post.class, Map.of("fId", id));
-        } catch (HibernateException e) {
-            log.error("No post found with id {}", id);
-            throw new RepositoryException("Post with id = " + id + " not found");
-        }
+        return crudRepository.optional(hql, Post.class, Map.of("fId", id));
     }
 
     @Override

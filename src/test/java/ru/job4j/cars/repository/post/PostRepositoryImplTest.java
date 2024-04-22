@@ -1,6 +1,5 @@
 package ru.job4j.cars.repository.post;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,10 +13,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author Constantine on 17.03.2024
@@ -30,7 +29,7 @@ class PostRepositoryImplTest {
     private PostRepository postRepository;
 
     @Test
-    void whenCreatePostThenGetTheSame() throws RepositoryException {
+    void whenCreatePostThenGetTheSame() {
         var currentLocalDateTime = LocalDateTime.now(ZoneId.of("UTC")).truncatedTo(ChronoUnit.MINUTES);
         var file = File.builder()
                 .name("Test car")
@@ -137,32 +136,9 @@ class PostRepositoryImplTest {
                 .isEqualTo("Granta");
     }
 
-    @Disabled
     @Test
-    void whenCannotFindThePostWithIdEqualsTo3ThenThrowsRepositoryException() {
-        var currentLocalDateTime = LocalDateTime.now(ZoneId.of("UTC")).truncatedTo(ChronoUnit.MINUTES);
-        var file = File.builder()
-                .name("Test car")
-                .path("/testpath")
-                .build();
-        var priceHistory = PriceHistory.builder()
-                .created(currentLocalDateTime)
-                .before(1L)
-                .after(2L)
-                .build();
-        var post = Post.builder()
-                .price(0L)
-                .title("Test title")
-                .created(currentLocalDateTime.minusDays(10))
-                .description("Test description")
-                .sold(false)
-                .build();
-        post.setFiles(Set.of(file));
-        post.setPriceHistory(List.of(priceHistory));
-        postRepository.create(post);
-        assertThatThrownBy(() -> postRepository.findById(3))
-                .isInstanceOf(RepositoryException.class)
-                .hasMessage("Post with id = 3 not found");
+    void whenCannotFindThePostWithIdEqualsTo3ThenGetAnEmptyOptional() {
+        assertThat(postRepository.findById(3)).isEqualTo(Optional.empty());
     }
 
     @Test

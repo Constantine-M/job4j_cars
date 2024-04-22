@@ -180,7 +180,7 @@ public class UserRepositoryImpl implements UserRepository {
                 Map.of("fLogin", login)
         );
         if (userOptional.isEmpty()) {
-            throw new RepositoryException("Repository exception: cant find user by login = ".concat(String.valueOf(login)));
+            throw new RepositoryException("Repository exception: cant find user by login = ".concat(login));
         }
         return userOptional;
     }

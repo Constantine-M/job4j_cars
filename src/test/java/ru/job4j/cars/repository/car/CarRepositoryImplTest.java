@@ -13,6 +13,7 @@ import ru.job4j.cars.model.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
@@ -100,10 +101,8 @@ class CarRepositoryImplTest {
     }
 
     @Test
-    void whenCannotFindCarThenThrowRepositoryException() {
-        assertThatThrownBy(() -> carRepository.findById(1))
-                .isInstanceOf(RepositoryException.class)
-                .hasMessage("Repository exception: cant find car with ID = 1");
+    void whenCannotFindCarThenGetAnEmptyOptional() {
+        assertThat(carRepository.findById(3)).isEqualTo(Optional.empty());
     }
 
     @Test
