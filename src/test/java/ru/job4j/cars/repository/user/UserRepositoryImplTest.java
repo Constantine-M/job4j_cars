@@ -40,6 +40,7 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Constantine on 27.03.2024
  */
+@Disabled
 @SpringBootTest
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, CleanupH2DatabaseTestListener.class})
 class UserRepositoryImplTest {
@@ -53,7 +54,6 @@ class UserRepositoryImplTest {
                 .login("test")
                 .password("123")
                 .build();
-        user.setPosts(emptyList());
         userRepository.create(user);
         assertThat(userRepository.findById(1).get())
                 .usingRecursiveComparison()

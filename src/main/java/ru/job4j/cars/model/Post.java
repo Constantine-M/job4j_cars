@@ -77,4 +77,12 @@ public class Post {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id")
     private Set<File> files = new HashSet<>();
+
+    /**
+     * Множество объявлений может быть
+     * у одного пользователя.
+     */
+    @ManyToOne
+    @JoinColumn(name = "auto_user_id", foreignKey = @ForeignKey(name = "USER_ID_FK"))
+    private User user;
 }

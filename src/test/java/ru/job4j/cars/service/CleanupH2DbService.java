@@ -83,8 +83,8 @@ public class CleanupH2DbService {
      * чтобы он заработал как надо.
      */
     private void truncateTables(Statement statement, String schemaName) {
-        getSchemaTables(statement, schemaName)
-                .forEach(tableName -> executeStatement(statement, "TRUNCATE TABLE " + tableName + " RESTART IDENTITY"));
+        var schemaTables = getSchemaTables(statement, schemaName);
+        schemaTables.forEach(tableName -> executeStatement(statement, "TRUNCATE TABLE " + tableName + " RESTART IDENTITY"));
     }
 
     private void dropAllTables(Statement statement, String schemaName) {
@@ -154,6 +154,17 @@ public class CleanupH2DbService {
         String sql = String.format("SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.SEQUENCES WHERE SEQUENCE_SCHEMA='%s'", schemaName);
         return queryForList(statement, sql);
     }
+
+    /**
+     * В данном методе я умышленно удалил
+     * из результирующего Set<String>
+     * нужные мне таблицы, а именно
+     * "ENGINE", "COLOR", "BODY", "CAR_BRAND",
+     * потому что они заполнены заранее.
+     *
+     * Общее исполнение без изменений -
+     * просто вернул кастомный сет.
+     */
     @SneakyThrows
     private Set<String> queryForList(Statement statement, String sql) {
         Set<String> tables = new HashSet<>();
@@ -162,6 +173,11 @@ public class CleanupH2DbService {
                 tables.add(rs.getString(1));
             }
         }
+        log.warn("Deleting tables from Set \"ENGINE\", \"COLOR\", \"BODY\", \"CAR_BRAND\". These tables wont be cleaned up!");
+        tables.remove("ENGINE");
+        tables.remove("COLOR");
+        tables.remove("BODY");
+        tables.remove("CAR_BRAND");
         return tables;
     }
 }

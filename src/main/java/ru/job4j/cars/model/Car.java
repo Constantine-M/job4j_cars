@@ -4,10 +4,6 @@ import lombok.*;
 import lombok.EqualsAndHashCode.Include;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Модель описывает автомобиль,
@@ -30,31 +26,41 @@ public class Car {
     @Include
     private int id;
 
-    /** Марка авто */
+    /** Модель авто. Заполянет пользователь. */
     @Include
     private String model;
 
-    private String color;
-
-    /** Пробег автомобиля */
+    /** Пробег автомобиля. Заполянет пользователь. */
     private int mileage;
 
+    /** Будет выпадающий список брендов */
+    @ManyToOne
+    @JoinColumn(name = "car_brand_id", foreignKey = @ForeignKey(name = "CAR_BRAND_ID_FK"))
+    private CarBrand brand;
+
+    /** Будет выпадающий список */
+    @ManyToOne
+    @JoinColumn(name = "color_id", foreignKey = @ForeignKey(name = "COLOR_ID_FK"))
+    private CarColor carColor;
+
     /**
-     * Связь one to one - у одной машины
-     * один двигатель. В случае сохранения
-     * машины - сохраняется и двигатель.
-     * Аналогично во время удаления.
+     * Будет выпадающий список.
+     * В нем будут модификации двигателя
+     * - тип двигателя, объем и мощность.
+     *
+     * Заранее будет заполнена таблица
+     * engine.
      */
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "engine_id")
+    @ManyToOne
+    @JoinColumn(name = "engine_id", foreignKey = @ForeignKey(name = "ENGINE_ID_FK"))
     private Engine engine;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "body_id")
-//    @Column(name = "body_id")
+    /** Будет выпадающим списком */
+    @ManyToOne
+    @JoinColumn(name = "body_id", foreignKey = @ForeignKey(name = "BODY_ID_FK"))
     private Body body;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "auto_passport_id")
+    @JoinColumn(name = "auto_passport_id", foreignKey = @ForeignKey(name = "AUTO_PASSPORT_ID_FK"))
     private AutoPassport passport;
 }

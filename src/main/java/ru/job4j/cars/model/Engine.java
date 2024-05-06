@@ -27,10 +27,12 @@ public class Engine {
     private int id;
 
     /** Тип двигателя - бензин, дизель, электро.. */
-    private String type;
+    @Column(name = "fuel_type")
+    private String fuelType;
 
+    /** Объем двигателя в литрах */
     private float capacity;
 
-    @Column(name = "horsepower")
+    @Column(name = "horse_power")
     private int horsePower;
 }

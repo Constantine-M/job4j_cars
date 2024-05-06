@@ -6,20 +6,19 @@ import lombok.EqualsAndHashCode.Include;
 import javax.persistence.*;
 
 /**
- * Модель описывает тип кузова.
- * Например, хэтчбек
+ * Модель описывает марку автомобиля.
  *
- * @author Constantine on 13.04.2024
+ * @author Constantine on 04.05.2024
  */
-@Builder
+@Entity
+@Table(name = "car_brand")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "body")
-@Entity
-public class Body {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CarBrand {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

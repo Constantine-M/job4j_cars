@@ -2,6 +2,6 @@ CREATE TABLE IF NOT EXISTS engine
 (
     id SERIAL PRIMARY KEY,
     capacity FLOAT,
-    horsepower INT,
-    type VARCHAR(32)
+    horse_power INT,
+    fuel_type VARCHAR(32)
 );

@@ -6,20 +6,17 @@ import lombok.EqualsAndHashCode.Include;
 import javax.persistence.*;
 
 /**
- * Модель описывает тип кузова.
- * Например, хэтчбек
- *
- * @author Constantine on 13.04.2024
+ * @author Constantine on 04.05.2024
  */
-@Builder
+@Entity
+@Table(name = "color")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "body")
-@Entity
-public class Body {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CarColor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

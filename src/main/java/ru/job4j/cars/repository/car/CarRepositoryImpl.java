@@ -28,7 +28,7 @@ public class CarRepositoryImpl implements CarRepository {
      */
     @Override
     public Car create(Car car) {
-        crudRepository.run(session -> session.persist(car));
+        crudRepository.run(session -> session.save(car));
         return car;
     }
 

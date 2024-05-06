@@ -3,6 +3,7 @@ package ru.job4j.cars.repository.file;
 import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.model.File;
 
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -10,7 +11,9 @@ import java.util.Optional;
  */
 public interface FileRepository {
 
-    void save(File file);
+    File save(File file);
+
+    void saveAllFiles(Collection<File> files);
 
     Optional<File> findById(int id) throws RepositoryException;
 

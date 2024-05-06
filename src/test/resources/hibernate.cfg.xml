@@ -30,6 +30,8 @@
         <mapping class="ru.job4j.cars.model.File" />
         <mapping class="ru.job4j.cars.model.Body" />
         <mapping class="ru.job4j.cars.model.AutoPassport" />
+        <mapping class="ru.job4j.cars.model.CarBrand" />
+        <mapping class="ru.job4j.cars.model.CarColor" />
 
     </session-factory>
 </hibernate-configuration>
