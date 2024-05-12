@@ -45,13 +45,6 @@ public class PostRepositoryImpl implements PostRepository {
      * @return список объявлений за последние 24 часа.
      */
     public Collection<Post> findAllLastDay() {
-//        String hql = """
-//                    SELECT DISTINCT post
-//                    FROM Post post
-//                    JOIN FETCH post.priceHistory
-//                    LEFT JOIN FETCH post.files
-//                    WHERE post.created > :lastTime
-//                    """;
         String hql = """
                     SELECT DISTINCT post
                     FROM Post post
