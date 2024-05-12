@@ -1,0 +1,68 @@
+<!--    Через атрибут fragment мы указываем блок кода, который можно будет вызывать по заданному в этом атрибуте имени.
+        В нашем случае имя = "header". Здесь мы выносим часть кода, которую впоследствии собираемся переиспользовать-->
+<div th:fragment="header">
+    <nav class="navbar navbar-expand navbar-light" style="background-color: #43CA88;">
+        <div class="container" style="font-size: 14px">
+            <a class="navbar-brand" href="/">
+                <!--Здесь мы использовали Tymeleaf для указания пути для картинки.
+                    А также создали для картинок типа "лого" директорию "images" внутри "static".
+                    И все получилось - картинка отображается на странице-->
+                <img th:src="@{/images/lowrider_logo3.png}" width="70" height="37" alt="">
+                Lowrider
+            </a>
+            <div class="collapse navbar-collapse">
+                <!--    С новыми зависимостями Bootstrap у нас теперь, чтобы отодвинуть
+                        колонки, нужно использовать не "me-auto", а "mr-auto".
+                        Дополнение! На другой машине с тем же самым браузером
+                        пришлось вернуть me-auto. Поэтому, какой вариант итоговый -
+                        не совсем понятно-->
+                <div class="navbar-nav mr-auto">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown" style="font-size: 16px">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Fast car filter
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                                    <li><a class="dropdown-item" th:href="@{/posts}">with mileage</a></li>
+                                    <li><a class="dropdown-item" th:href="@{/posts}">only new</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="navbar-nav me-auto">
+                        <a class="nav-item nav-link" style="font-size: 16px" th:href="@{/posts/create}">Add post</a>
+                    </div>
+                </div>
+            </div>
+            <!--    Если пользователь не вошел в систему, то ему выводятся кнопки "Регистрация" и "Войти".
+                    Если пользователь вошел в систему, то ему выводится его имя и кнопка "Выйти".
+                    Чтобы была возможность вывести кнопки навигационной панели, нужно во всех
+                    контроллерах добавить вывод пользователя в модель.-->
+<!--            <div class="d-flex" style="font-size: 16px" th:switch="${user.getName()}">-->
+<!--                <a th:case="'Guest'">-->
+<!--                    <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Registration</a>-->
+<!--                    <a class="nav-link text-secondary" th:href="@{/users/login}">Sign in</a>-->
+<!--                </a>-->
+<!--                <a th:case="null">-->
+<!--                    <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Registration</a>-->
+<!--                    <a class="nav-link text-secondary" th:href="@{/users/login}">Sign in</a>-->
+<!--                </a>-->
+<!--                &lt;!&ndash;    DEFAULT CASE&ndash;&gt;-->
+<!--                <a th:case="*">-->
+<!--                    <a class="nav-link text-secondary me-3" href="#" th:text="${user.getName()}"></a>-->
+<!--                    <a class="nav-link text-secondary" th:href="@{/users/logout}">Sign out</a>-->
+<!--                </a>-->
+<!--            </div>-->
+
+            <!--    ЭТО ВРЕМЯНКА. ВВЕРХУ ГОТОВЫЙ ВАРИК-->
+            <div class="d-flex" style="font-size: 16px">
+                <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Registration</a>
+                <a class="nav-link text-secondary" th:href="@{/users/login}">Sign in</a>
+            </div>
+        </div>
+    </nav>
+</div>

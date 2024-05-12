@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--  Зависимости Bootstrap-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href = "@{/css/bootstrap.min.css}" rel="stylesheet">
+    <script th:src="@{/js/code.jquery.com_jquery-3.7.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <!--    Чтобы работал выпадающий список в навигационной панели, требуется
+            добавить эту зависимость, иначе ничего выпадать не будет!   -->
+    <script th:src="@{/js/bootstrap.bundle.js}"></script>
+
+    <!--    Здесь я задал стиль для body и футера таким образом,
+            чтобы наш футер всегда был внизу, вне зависимости от того,
+            много контента на странице или мало-->
+    <style>
+        body {
+            min-height: 100vh;
+        }
+        footer {
+            position: sticky;
+            top: 100%;
+        }
+    </style>
+
+    <title>Registration</title>
+</head>
+<body>
+<!--    С помощью тега <header> и атрибута insert мы вставляем общий компонент страницы (блок навигации, который мы вынесли отдельно)-->
+<header th:insert="blocks/header :: header"></header>
+<div class="container">
+    <br><br>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <!--  Выражение th:action="@{/users/register}" направляет форму к POST запросу /users/register-->
+            <form class="mt-3" style="font-size: 14px" th:action="@{/users/register}" method="post">
+                <div class="mb-3">
+                    <!--    Здесь мы делаем подпись для формы.
+                            <label for="name" - здесь name - это ключ-->
+                    <label for="name" class="form-label"><b>Name</b></label>
+                    <!--    Формы передают данные в виде ключ-значение. Ключ указывается с помощью атрибута name. Его можно и по-другому назвать.
+                            Т.к. известен ключ и название поля объекта, их можно сопоставить (Mapping). Эта идея реализована в Spring MVC.
+                            id="name" - это ключ
+                            name="fullName" - это значение. Заметь, fullName - это одно из полей модели User-->
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Consta Mezenin" required>
+                </div>
+                <!--    Для почты была прописана валидация на стороне сервера.
+                        Здесь мы указали, что поле недопустимо с помощью "is-invalid".
+                        Чтобы указать, что недопустимая обратная связь/сообщение об ошибке связано с соответствующим полем формы,
+                        мы добавили aria-describedby="loginFeedback".
+                        И чтобы вывести текст ошибки, добавили строку
+                        <div id="loginFeedback" class="invalid-feedback" th:text="${error}">  -->
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="login" class="form-label"><b>Login</b></label>
+                            <input type="text" class="form-control is-invalid" id="login" aria-describedby="loginFeedback" name="login" placeholder="Sleeping Beauty" required>
+                            <div id="loginFeedback" class="invalid-feedback" th:text="${error}"></div>
+                        </div>
+                        <div class="col-6">
+                            <label for="password" class="form-label"><b>Password</b></label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="timezone" class="form-label"><b>Time zone</b></label>
+                    <select class="form-control" id="timezone" name="userZone">
+                        <option selected></option>
+                        <option th:each="timezone : ${timeZones}" th:value="${timezone.ID}" th:text="${timezone.ID + ' : ' + timezone.displayName}"></option>
+                    </select>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-6"></div>
+                    <div class="col-6 mt-3">
+                        <div class="row">
+                            <div class="col-6"><a class="btn btn-danger w-100" th:href="@{/index}">Cancel</a></div>
+                            <div class="col-6"><button class="btn btn-primary w-100" type="submit">Register</button></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--    Вызов Footer добавляется в конце HTML страницы -->
+<footer th:insert="blocks/footer :: footer"></footer>
+</body>
+</html>

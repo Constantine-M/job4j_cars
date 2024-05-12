@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--  Зависимости Bootstrap-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href = "@{/css/bootstrap.min.css}" rel="stylesheet">
+    <script th:src="@{/js/code.jquery.com_jquery-3.7.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <!--    Чтобы работал выпадающий список в навигационной панели, требуется
+            добавить эту зависимость, иначе ничего выпадать не будет!   -->
+    <script th:src="@{/js/bootstrap.bundle.js}"></script>
+
+    <!--    Здесь я задал стиль для body и футера таким образом,
+            чтобы наш футер всегда был внизу, вне зависимости от того,
+            много контента на странице или мало-->
+    <style>
+        body {
+            min-height: 100vh;
+        }
+        footer {
+            position: sticky;
+            top: 100%;
+        }
+    </style>
+
+    <title>Login</title>
+</head>
+<body>
+<!--    С помощью тега <header> и атрибута insert мы вставляем общий компонент страницы (блок навигации, который мы вынесли отдельно)-->
+<header th:insert="blocks/header :: header"></header>
+<div class="container">
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <form class="mt-5" style="font-size: 14px" th:action="@{/users/login}" method="post">
+                <!--    Thymeleaf проверяет есть ли на странице значение по ключу error.
+                        Если есть, то создается элемент div, иначе элемент не создается.-->
+                <div class="mb-3" th:if="${error}">
+                    <p class="text-danger" th:text="${error}"></p>
+                </div>
+                <div class="mb-3">
+                    <label for="login" class="form-label"><b>Login</b></label>
+                    <input class="form-control" id="login" name="login" placeholder="TopManager" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label"><b>Password</b></label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-7">
+                        <p>Not registered yet? <span><a th:href="@{/users/register}">Registration</a></span></p>
+                    </div>
+                    <div class="col-5">
+                        <div class="row">
+                            <div class="col-6"><a class="btn btn-danger w-100" th:href="@{/}">Cancel</a></div>
+                            <div class="col-6"><button class="btn btn-primary w-100" type="submit">Sign in</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
+<!--    Вызов Footer добавляется в конце HTML страницы -->
+<footer th:insert="blocks/footer :: footer"></footer>
+</body>
+</html>
