@@ -10,4 +10,6 @@ import java.util.Collection;
 public interface BodyService {
 
     Collection<Body> findAll();
+
+    Body findById(int id);
 }

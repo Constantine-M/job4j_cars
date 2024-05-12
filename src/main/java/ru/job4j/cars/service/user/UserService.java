@@ -24,4 +24,6 @@ public interface UserService {
     List<User> findByLikeLogin(String key) throws SimpleServiceException;
 
     Optional<User> findByLogin(String login) throws SimpleServiceException;
+
+    Optional<User> findByLoginAndPassword(String login, String password) throws SimpleServiceException;
 }

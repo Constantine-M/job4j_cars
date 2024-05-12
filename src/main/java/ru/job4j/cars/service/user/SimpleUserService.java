@@ -7,6 +7,7 @@ import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.exception.SimpleServiceException;
 import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.user.UserRepository;
+import ru.job4j.cars.util.ExceptionUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,10 +26,16 @@ public class SimpleUserService implements UserService {
     @Override
     public User createUser(User user) throws SimpleServiceException {
         try {
+            if (userRepository.findByLogin(user.getLogin()).isPresent()) {
+                log.error("User with login {} already exists", user.getLogin());
+                throw new RepositoryException("Repository exception: duplicate user!");
+            }
             userRepository.create(user);
         } catch (RepositoryException e) {
-            log.error("Could not create user! Exception logged: {}", e.getMessage());
-            throw new SimpleServiceException(Arrays.toString(e.getStackTrace()));
+            if (ExceptionUtil.getRootCause(e) instanceof RepositoryException) {
+                log.error("Could not create user! Exception logged: {}", e.getMessage());
+                throw new SimpleServiceException(Arrays.toString(e.getStackTrace()));
+            }
         }
         return user;
     }
@@ -74,6 +81,16 @@ public class SimpleUserService implements UserService {
             return userRepository.findByLogin(login);
         } catch (RepositoryException e) {
             log.error("Could not find user by login! Exception logged: {}", Arrays.toString(e.getStackTrace()));
+            throw new SimpleServiceException(Arrays.toString(e.getStackTrace()), e);
+        }
+    }
+
+    @Override
+    public Optional<User> findByLoginAndPassword(String login, String password) throws SimpleServiceException {
+        try {
+            return userRepository.findByLoginAndPassword(login, password);
+        } catch (RepositoryException e) {
+            log.error("Could not find user by login and password! Exception logged: {}", Arrays.toString(e.getStackTrace()));
             throw new SimpleServiceException(Arrays.toString(e.getStackTrace()), e);
         }
     }

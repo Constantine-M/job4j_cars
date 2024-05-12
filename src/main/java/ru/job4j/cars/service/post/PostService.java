@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public interface PostService {
 
-    Optional<Post> savePost(Post post, Collection<FileDto> fileDto);
+    Post savePost(Post post, Collection<FileDto> fileDto);
 
     Collection<Post> findAllPosts();
 }
