@@ -155,16 +155,6 @@ public class CleanupH2DbService {
         return queryForList(statement, sql);
     }
 
-    /**
-     * В данном методе я умышленно удалил
-     * из результирующего Set<String>
-     * нужные мне таблицы, а именно
-     * "ENGINE", "COLOR", "BODY", "CAR_BRAND",
-     * потому что они заполнены заранее.
-     *
-     * Общее исполнение без изменений -
-     * просто вернул кастомный сет.
-     */
     @SneakyThrows
     private Set<String> queryForList(Statement statement, String sql) {
         Set<String> tables = new HashSet<>();
@@ -173,11 +163,6 @@ public class CleanupH2DbService {
                 tables.add(rs.getString(1));
             }
         }
-        log.warn("Deleting tables from Set \"ENGINE\", \"COLOR\", \"BODY\", \"CAR_BRAND\". These tables wont be cleaned up!");
-        tables.remove("ENGINE");
-        tables.remove("COLOR");
-        tables.remove("BODY");
-        tables.remove("CAR_BRAND");
         return tables;
     }
 }

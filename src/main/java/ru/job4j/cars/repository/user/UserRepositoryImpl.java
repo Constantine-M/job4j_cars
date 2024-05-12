@@ -5,13 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.event.spi.PersistEventListener;
+import org.hibernate.exception.ConstraintViolationException;
+import org.postgresql.util.PSQLException;
 import org.springframework.stereotype.Repository;
 import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.model.User;
 import ru.job4j.cars.repository.CrudRepository;
 
 import javax.persistence.PersistenceException;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -51,6 +55,10 @@ public class UserRepositoryImpl implements UserRepository {
      * на добавление user-а в persistent
      * context.
      *
+     * В данном методе не удается поймать исключение
+     * в момент, когда пользователь уже
+     * существует, поэтому делается проверка.
+     *
      * @param user пользователь
      * @return пользователь с ID
      */
@@ -60,7 +68,7 @@ public class UserRepositoryImpl implements UserRepository {
             return user;
         } catch (PersistenceException e) {
             log.error(Arrays.toString(e.getStackTrace()));
-            throw new RepositoryException("Repository exception: duplicate user", e);
+            throw new RepositoryException("Repository exception: user cant save.", e);
         }
     }
 
@@ -181,6 +189,22 @@ public class UserRepositoryImpl implements UserRepository {
         );
         if (userOptional.isEmpty()) {
             throw new RepositoryException("Repository exception: cant find user by login = ".concat(login));
+        }
+        return userOptional;
+    }
+
+    @Override
+    public Optional<User> findByLoginAndPassword(String login, String password) throws RepositoryException {
+        String hql = """
+                    FROM User user
+                    WHERE user.login = :fLogin AND user.password = :fPassword
+                    """;
+        var userOptional = crudRepository
+                .optional(hql, User.class,
+                        Map.of("fLogin", login, "fPassword", password)
+                );
+        if (userOptional.isEmpty()) {
+            throw new RepositoryException("Repository exception: cant find user by login and password = ".concat(login));
         }
         return userOptional;
     }

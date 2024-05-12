@@ -1,6 +1,5 @@
 package ru.job4j.cars.repository.user;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,21 +7,13 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.listener.CleanupH2DatabaseTestListener;
-import ru.job4j.cars.model.File;
-import ru.job4j.cars.model.Post;
-import ru.job4j.cars.model.PriceHistory;
 import ru.job4j.cars.model.User;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * В тестовом классе используется аннотация
@@ -40,7 +31,6 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Constantine on 27.03.2024
  */
-@Disabled
 @SpringBootTest
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, CleanupH2DatabaseTestListener.class})
 class UserRepositoryImplTest {
@@ -57,7 +47,6 @@ class UserRepositoryImplTest {
         userRepository.create(user);
         assertThat(userRepository.findById(1).get())
                 .usingRecursiveComparison()
-                .ignoringFields("posts")
                 .isEqualTo(user);
     }
 
@@ -136,7 +125,7 @@ class UserRepositoryImplTest {
                 .password("123")
                 .build();
         userRepository.create(user);
-        var errorMessage = "Repository exception: duplicate user";
+        var errorMessage = "Repository exception: user cant save.";
         assertThatThrownBy(() -> userRepository.create(userGemini))
                 .isInstanceOf(RepositoryException.class)
                 .hasMessage(errorMessage);
@@ -181,7 +170,6 @@ class UserRepositoryImplTest {
         userRepository.create(user);
         assertThat(userRepository.findByLogin("Consta").get())
                 .usingRecursiveComparison()
-                .ignoringFields("posts")
                 .isEqualTo(user);
     }
 

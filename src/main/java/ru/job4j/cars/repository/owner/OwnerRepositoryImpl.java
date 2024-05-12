@@ -40,7 +40,7 @@ public class OwnerRepositoryImpl implements OwnerRepository {
      */
     @Override
     public Owner create(Owner owner) {
-        crudRepository.run(session -> session.persist(owner));
+        crudRepository.run(session -> session.save(owner));
         return owner;
     }
 

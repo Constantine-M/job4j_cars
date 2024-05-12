@@ -5,6 +5,7 @@ import org.springframework.core.Ordered;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 import ru.job4j.cars.service.CleanupH2DbService;
+import ru.job4j.cars.service.InitH2DbService;
 
 /**
  * Данный класс-слушатель позволяет реагировать
@@ -29,10 +30,36 @@ public class CleanupH2DatabaseTestListener implements TestExecutionListener, Ord
 
     private static final String H2_SCHEMA_NAME = "PUBLIC";
 
+    /**
+     * Заполнение некоторых таблиц
+     * тестовыми данными перед выполнение
+     * тестового класса.
+     */
+    @Override
+    public void beforeTestClass(TestContext testContext) throws Exception {
+        TestExecutionListener.super.beforeTestClass(testContext);
+        /*initDatabase(testContext);*/
+    }
+
+    /**
+     * Очистка всех таблиц после выполнения
+     * тестового метода.
+     */
+    @Override
+    public void afterTestMethod(TestContext testContext) throws Exception {
+        TestExecutionListener.super.afterTestMethod(testContext);
+        cleanupDatabase(testContext);
+    }
+
+    /**
+     * Заполнение некоторых таблиц
+     * тестовыми данными перед выполнение
+     * тестового метода.
+     */
     @Override
     public void beforeTestMethod(TestContext testContext) throws Exception {
         TestExecutionListener.super.beforeTestMethod(testContext);
-        cleanupDatabase(testContext);
+        initDatabase(testContext);
     }
 
     @Override
@@ -56,6 +83,13 @@ public class CleanupH2DatabaseTestListener implements TestExecutionListener, Ord
         CleanupH2DbService cleanupH2DbService = testContext.getApplicationContext().getBean(CleanupH2DbService.class);
         cleanupH2DbService.cleanup(H2_SCHEMA_NAME);
         log.info("Cleaning up database end");
+    }
+
+    private void initDatabase(TestContext testContext) {
+        log.info("Filling tables (ENGINE, COLOR, BODY, CAR_BRAND) begin");
+        InitH2DbService initH2DbService = testContext.getApplicationContext().getBean(InitH2DbService.class);
+        initH2DbService.initDatabase();
+        log.info("Filling tables (ENGINE, COLOR, BODY, CAR_BRAND) end");
     }
 
     private void dropDatabase(TestContext testContext) {

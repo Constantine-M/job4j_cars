@@ -9,6 +9,11 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.listener.CleanupH2DatabaseTestListener;
 import ru.job4j.cars.model.*;
+import ru.job4j.cars.repository.body.BodyRepository;
+import ru.job4j.cars.repository.brand.CarBrandRepository;
+import ru.job4j.cars.repository.car.CarRepository;
+import ru.job4j.cars.repository.color.CarColorRepository;
+import ru.job4j.cars.repository.engine.EngineRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,13 +28,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Constantine on 17.03.2024
  */
-@Disabled
+//@Disabled
 @SpringBootTest
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, CleanupH2DatabaseTestListener.class})
 class PostRepositoryImplTest {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private BodyRepository bodyRepository;
+
+    @Autowired
+    private CarBrandRepository carBrandRepository;
+
+    @Autowired
+    private CarColorRepository carColorRepository;
+
+    @Autowired
+    private EngineRepository engineRepository;
 
     @Test
     void whenCreatePostThenGetTheSame() {
@@ -53,41 +70,37 @@ class PostRepositoryImplTest {
         post.setFiles(Set.of(file));
         post.setPriceHistory(List.of(priceHistory));
         postRepository.create(post);
-        var actualPost = postRepository.findById(1);
-        assertThat(actualPost.get())
+        var actualPost = postRepository.findById(1).get();
+        assertThat(actualPost)
                 .usingRecursiveComparison()
-                .ignoringFields("car")
                 .isEqualTo(post);
     }
 
     @Test
-    void whenUpdateCarFromFordToLadaInPostThenGetPostWithLada() throws RepositoryException {
+    void whenUpdateCarFromToyotaToVolkswagenInPostThenGetPostWithVolkswagen() throws RepositoryException {
         var currentLocalDateTime = LocalDateTime.now(ZoneId.of("UTC")).truncatedTo(ChronoUnit.MINUTES);
         var owner = Owner.builder()
-                .name("owner")
-                .start(currentLocalDateTime.minusDays(1))
+                .name("Eddie")
+                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
                 .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
-        var engine = Engine.builder()
-//                .type("diesel")
-                .capacity(6.5F)
-                .horsePower(280)
-                .build();
-        var body = Body.builder()
-//                .body("pickup")
-                .build();
+        var engine = engineRepository.findById(1).get();
+        var body = bodyRepository.findById(1).get();
+        var carBrand = carBrandRepository.findById(1).get();
+        var color = carColorRepository.findById(1).get();
         var passport = AutoPassport.builder()
                 .original(true)
                 .owners(Set.of(owner))
                 .build();
         var car = Car.builder()
-//                .color("red")
-                .model("Ford F150")
+                .model("Crown")
                 .mileage(88000)
                 .build();
         car.setBody(body);
         car.setEngine(engine);
         car.setPassport(passport);
+        car.setCarColor(color);
+        car.setBrand(carBrand);
         var file = File.builder()
                 .name("Test car")
                 .path("/testpath")
@@ -108,35 +121,28 @@ class PostRepositoryImplTest {
         post.setPriceHistory(List.of(priceHistory));
         post.setCar(car);
         postRepository.create(post);
-        var ownerEddie = Owner.builder()
-                .name("Ed")
-                .start(currentLocalDateTime.minusDays(20))
-                .end(currentLocalDateTime)
-                .build();
-        var passportLada = AutoPassport.builder()
+        var engine2 = engineRepository.findById(1).get();
+        var body2 = bodyRepository.findById(1).get();
+        var carBrand2 = carBrandRepository.findById(2).get();
+        var color2 = carColorRepository.findById(3).get();
+        var passport2 = AutoPassport.builder()
                 .original(true)
-                .owners(Set.of(ownerEddie))
+                .owners(Set.of(owner))
                 .build();
-        var bodyLada = Body.builder()
-//                .body("lived-back")
+        var newCar = Car.builder()
+                .model("Jetta")
+                .mileage(130000)
                 .build();
-        var engineLada = Engine.builder()
-                .horsePower(75)
-                .capacity(1.5F)
-//                .type("benzino")
-                .build();
-        var carLada = Car.builder()
-//                .color("silver")
-                .model("Granta")
-                .mileage(0)
-                .build();
-        carLada.setBody(bodyLada);
-        carLada.setEngine(engineLada);
-        carLada.setPassport(passportLada);
-        post.setCar(carLada);
+        newCar.setBody(body2);
+        newCar.setEngine(engine2);
+        newCar.setPassport(passport2);
+        newCar.setCarColor(color2);
+        newCar.setBrand(carBrand2);
+        post.setCar(newCar);
         postRepository.updatePost(post);
-        assertThat(postRepository.findById(1).get().getCar().getModel())
-                .isEqualTo("Granta");
+        assertThat(postRepository.findById(1).get().getCar())
+                .usingRecursiveComparison()
+                .isEqualTo(newCar);
     }
 
     @Test
@@ -145,58 +151,30 @@ class PostRepositoryImplTest {
     }
 
     @Test
-    void whenFindAllThenGetListOfTwoPostsWithFordAndLada() {
+    void whenFindAllThenGetListOfTwoPostsWithToyotaAndVW() {
         var currentLocalDateTime = LocalDateTime.now(ZoneId.of("UTC")).truncatedTo(ChronoUnit.MINUTES);
         var owner = Owner.builder()
-                .name("owner")
+                .name("Eddie")
                 .start(currentLocalDateTime.minusDays(1))
                 .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
-        var engine = Engine.builder()
-//                .type("diesel")
-                .capacity(6.5F)
-                .horsePower(280)
-                .build();
-        var body = Body.builder()
-//                .body("pickup")
-                .build();
+        var engine = engineRepository.findById(1).get();
+        var body = bodyRepository.findById(1).get();
+        var carBrand = carBrandRepository.findById(1).get();
+        var color = carColorRepository.findById(1).get();
         var passport = AutoPassport.builder()
                 .original(true)
                 .owners(Set.of(owner))
                 .build();
         var car = Car.builder()
-//                .color("red")
-                .model("Ford F150")
+                .model("Crown")
                 .mileage(88000)
                 .build();
         car.setBody(body);
         car.setEngine(engine);
         car.setPassport(passport);
-        var owner2 = Owner.builder()
-                .name("owner 2")
-                .start(currentLocalDateTime.minusDays(10))
-                .end(currentLocalDateTime)
-                .build();
-        var passport2 = AutoPassport.builder()
-                .original(false)
-                .owners(Set.of(owner2))
-                .build();
-        var engine2 = Engine.builder()
-//                .type("gasoline")
-                .capacity(1.6F)
-                .horsePower(110)
-                .build();
-        var body2 = Body.builder()
-//                .body("sedan")
-                .build();
-        var car2 = Car.builder()
-//                .color("yellow")
-                .model("Vesta")
-                .mileage(56000)
-                .build();
-        car2.setPassport(passport2);
-        car2.setBody(body2);
-        car2.setEngine(engine2);
+        car.setCarColor(color);
+        car.setBrand(carBrand);
         var file = File.builder()
                 .name("Test car")
                 .path("/testpath")
@@ -208,7 +186,7 @@ class PostRepositoryImplTest {
                 .build();
         var post = Post.builder()
                 .price(0L)
-                .title("Test title")
+                .title("Test sale Crown")
                 .created(currentLocalDateTime.minusDays(10))
                 .description("Test description")
                 .sold(false)
@@ -216,25 +194,48 @@ class PostRepositoryImplTest {
         post.setFiles(Set.of(file));
         post.setPriceHistory(List.of(priceHistory));
         post.setCar(car);
+        postRepository.create(post);
+        var owner2 = Owner.builder()
+                .name("Consta")
+                .start(currentLocalDateTime.minusDays(1))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
+                .build();
+        var engine2 = engineRepository.findById(2).get();
+        var body2 = bodyRepository.findById(1).get();
+        var carBrand2 = carBrandRepository.findById(2).get();
+        var color2 = carColorRepository.findById(1).get();
+        var passport2 = AutoPassport.builder()
+                .original(true)
+                .owners(Set.of(owner2))
+                .build();
+        var car2 = Car.builder()
+                .model("Golf")
+                .mileage(88000)
+                .build();
+        car2.setBody(body2);
+        car2.setEngine(engine2);
+        car2.setPassport(passport2);
+        car2.setCarColor(color2);
+        car2.setBrand(carBrand2);
         var file2 = File.builder()
-                .name("Test file")
-                .path("/test")
+                .name("Test car 2")
+                .path("/testpath_2")
                 .build();
         var priceHistory2 = PriceHistory.builder()
                 .created(currentLocalDateTime)
-                .before(10L)
-                .after(200L)
+                .before(1L)
+                .after(2L)
                 .build();
         var post2 = Post.builder()
-                .created(currentLocalDateTime)
-                .sold(true)
-                .title("Fast sale Lada!")
-                .description("Fast please!")
+                .price(0L)
+                .title("Test sale VW")
+                .created(currentLocalDateTime.minusDays(10))
+                .description("Test description")
+                .sold(false)
                 .build();
-        post2.setCar(car2);
-        post2.setPriceHistory(List.of(priceHistory2));
         post2.setFiles(Set.of(file2));
-        postRepository.create(post);
+        post2.setPriceHistory(List.of(priceHistory2));
+        post2.setCar(car2);
         postRepository.create(post2);
         var expected = List.of(post, post2);
         assertThat(postRepository.findAll()).isEqualTo(expected);
@@ -244,55 +245,27 @@ class PostRepositoryImplTest {
     void whenAddTwoPostsThenGetOnlyOneWithPhoto() {
         var currentLocalDateTime = LocalDateTime.now(ZoneId.of("UTC")).truncatedTo(ChronoUnit.MINUTES);
         var owner = Owner.builder()
-                .name("owner")
+                .name("Eddie")
                 .start(currentLocalDateTime.minusDays(1))
                 .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
-        var engine = Engine.builder()
-//                .type("diesel")
-                .capacity(6.5F)
-                .horsePower(280)
-                .build();
-        var body = Body.builder()
-//                .body("pickup")
-                .build();
+        var engine = engineRepository.findById(1).get();
+        var body = bodyRepository.findById(1).get();
+        var carBrand = carBrandRepository.findById(1).get();
+        var color = carColorRepository.findById(1).get();
         var passport = AutoPassport.builder()
                 .original(true)
                 .owners(Set.of(owner))
                 .build();
         var car = Car.builder()
-//                .color("red")
-                .model("Ford F150")
+                .model("Crown")
                 .mileage(88000)
                 .build();
         car.setBody(body);
         car.setEngine(engine);
         car.setPassport(passport);
-        var owner2 = Owner.builder()
-                .name("owner 2")
-                .start(currentLocalDateTime.minusDays(10))
-                .end(currentLocalDateTime)
-                .build();
-        var passport2 = AutoPassport.builder()
-                .original(false)
-                .owners(Set.of(owner2))
-                .build();
-        var engine2 = Engine.builder()
-//                .type("gasoline")
-                .capacity(1.6F)
-                .horsePower(110)
-                .build();
-        var body2 = Body.builder()
-//                .body("sedan")
-                .build();
-        var car2 = Car.builder()
-//                .color("yellow")
-                .model("Vesta")
-                .mileage(56000)
-                .build();
-        car2.setPassport(passport2);
-        car2.setBody(body2);
-        car2.setEngine(engine2);
+        car.setCarColor(color);
+        car.setBrand(carBrand);
         var priceHistory = PriceHistory.builder()
                 .created(currentLocalDateTime)
                 .before(1L)
@@ -300,7 +273,7 @@ class PostRepositoryImplTest {
                 .build();
         var post = Post.builder()
                 .price(0L)
-                .title("Test title")
+                .title("Test sale Crown")
                 .created(currentLocalDateTime.minusDays(10))
                 .description("Test description")
                 .sold(false)
@@ -308,25 +281,48 @@ class PostRepositoryImplTest {
         post.setFiles(emptySet());
         post.setPriceHistory(List.of(priceHistory));
         post.setCar(car);
+        postRepository.create(post);
+        var owner2 = Owner.builder()
+                .name("Consta")
+                .start(currentLocalDateTime.minusDays(1))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
+                .build();
+        var engine2 = engineRepository.findById(2).get();
+        var body2 = bodyRepository.findById(1).get();
+        var carBrand2 = carBrandRepository.findById(2).get();
+        var color2 = carColorRepository.findById(1).get();
+        var passport2 = AutoPassport.builder()
+                .original(true)
+                .owners(Set.of(owner2))
+                .build();
+        var car2 = Car.builder()
+                .model("Golf")
+                .mileage(88000)
+                .build();
+        car2.setBody(body2);
+        car2.setEngine(engine2);
+        car2.setPassport(passport2);
+        car2.setCarColor(color2);
+        car2.setBrand(carBrand2);
         var file2 = File.builder()
-                .name("Test file")
-                .path("/test")
+                .name("Test car 2")
+                .path("/testpath_2")
                 .build();
         var priceHistory2 = PriceHistory.builder()
                 .created(currentLocalDateTime)
-                .before(10L)
-                .after(200L)
+                .before(1L)
+                .after(2L)
                 .build();
         var post2 = Post.builder()
-                .created(currentLocalDateTime)
-                .sold(true)
-                .title("Fast sale Lada!")
-                .description("Fast please!")
+                .price(0L)
+                .title("Test sale VW")
+                .created(currentLocalDateTime.minusDays(10))
+                .description("Test description")
+                .sold(false)
                 .build();
-        post2.setCar(car2);
-        post2.setPriceHistory(List.of(priceHistory2));
         post2.setFiles(Set.of(file2));
-        postRepository.create(post);
+        post2.setPriceHistory(List.of(priceHistory2));
+        post2.setCar(car2);
         postRepository.create(post2);
         var expected = List.of(post2);
         assertThat(postRepository.findAllWithPhoto()).isEqualTo(expected);
@@ -336,55 +332,31 @@ class PostRepositoryImplTest {
     void whenAddThreePostsThenGet2OfThemCreatedByLastDay() {
         var currentLocalDateTime = LocalDateTime.now(ZoneId.of("UTC")).truncatedTo(ChronoUnit.MINUTES);
         var owner = Owner.builder()
-                .name("owner")
+                .name("Eddie")
                 .start(currentLocalDateTime.minusDays(1))
                 .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
-        var engine = Engine.builder()
-//                .type("diesel")
-                .capacity(6.5F)
-                .horsePower(280)
-                .build();
-        var body = Body.builder()
-//                .body("pickup")
-                .build();
+        var engine = engineRepository.findById(1).get();
+        var body = bodyRepository.findById(1).get();
+        var carBrand = carBrandRepository.findById(1).get();
+        var color = carColorRepository.findById(1).get();
         var passport = AutoPassport.builder()
                 .original(true)
                 .owners(Set.of(owner))
                 .build();
         var car = Car.builder()
-//                .color("red")
-                .model("Ford F150")
+                .model("Crown")
                 .mileage(88000)
                 .build();
         car.setBody(body);
         car.setEngine(engine);
         car.setPassport(passport);
-        var owner2 = Owner.builder()
-                .name("owner 2")
-                .start(currentLocalDateTime.minusDays(10))
-                .end(currentLocalDateTime)
+        car.setCarColor(color);
+        car.setBrand(carBrand);
+        var file = File.builder()
+                .name("Test car")
+                .path("/testpath")
                 .build();
-        var passport2 = AutoPassport.builder()
-                .original(false)
-                .owners(Set.of(owner2))
-                .build();
-        var engine2 = Engine.builder()
-//                .type("gasoline")
-                .capacity(1.6F)
-                .horsePower(110)
-                .build();
-        var body2 = Body.builder()
-//                .body("sedan")
-                .build();
-        var car2 = Car.builder()
-//                .color("yellow")
-                .model("Vesta")
-                .mileage(56000)
-                .build();
-        car2.setPassport(passport2);
-        car2.setBody(body2);
-        car2.setEngine(engine2);
         var priceHistory = PriceHistory.builder()
                 .created(currentLocalDateTime)
                 .before(1L)
@@ -392,137 +364,133 @@ class PostRepositoryImplTest {
                 .build();
         var post = Post.builder()
                 .price(0L)
-                .title("Test title")
-                .created(currentLocalDateTime.minusHours(2))
+                .title("Test sale Crown")
+                .created(currentLocalDateTime.minusDays(10))
                 .description("Test description")
                 .sold(false)
                 .build();
-        post.setFiles(emptySet());
+        post.setFiles(Set.of(file));
         post.setPriceHistory(List.of(priceHistory));
         post.setCar(car);
-        var file2 = File.builder()
-                .name("Test file")
-                .path("/test")
-                .build();
-        var priceHistory2 = PriceHistory.builder()
-                .created(currentLocalDateTime)
-                .before(10L)
-                .after(200L)
-                .build();
-        var post2 = Post.builder()
-                .created(currentLocalDateTime.minusDays(10))
-                .sold(true)
-                .title("Fast sale Lada!")
-                .description("Fast please!")
-                .build();
-        post2.setCar(car2);
-        post2.setPriceHistory(List.of(priceHistory2));
-        post2.setFiles(Set.of(file2));
-        var owner3 = Owner.builder()
-                .name("owner3")
+        postRepository.create(post);
+        var owner2 = Owner.builder()
+                .name("Consta")
                 .start(currentLocalDateTime.minusDays(1))
                 .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
-        var engine3 = Engine.builder()
-//                .type("electro")
-                .capacity(6.5F)
-                .horsePower(280)
+        var engine2 = engineRepository.findById(2).get();
+        var body2 = bodyRepository.findById(1).get();
+        var carBrand2 = carBrandRepository.findById(2).get();
+        var color2 = carColorRepository.findById(1).get();
+        var passport2 = AutoPassport.builder()
+                .original(true)
+                .owners(Set.of(owner2))
                 .build();
-        var body3 = Body.builder()
-//                .body("hatchback")
+        var car2 = Car.builder()
+                .model("Golf")
+                .mileage(88000)
                 .build();
+        car2.setBody(body2);
+        car2.setEngine(engine2);
+        car2.setPassport(passport2);
+        car2.setCarColor(color2);
+        car2.setBrand(carBrand2);
+        var file2 = File.builder()
+                .name("Test car 2")
+                .path("/testpath_2")
+                .build();
+        var priceHistory2 = PriceHistory.builder()
+                .created(currentLocalDateTime)
+                .before(1L)
+                .after(2L)
+                .build();
+        var post2 = Post.builder()
+                .price(0L)
+                .title("Test sale VW")
+                .created(currentLocalDateTime)
+                .description("Test description")
+                .sold(false)
+                .build();
+        post2.setFiles(Set.of(file2));
+        post2.setPriceHistory(List.of(priceHistory2));
+        post2.setCar(car2);
+        postRepository.create(post2);
+        var owner3 = Owner.builder()
+                .name("Marina")
+                .start(currentLocalDateTime.minusDays(1))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
+                .build();
+        var engine3 = engineRepository.findById(2).get();
+        var body3 = bodyRepository.findById(3).get();
+        var carBrand3 = carBrandRepository.findById(3).get();
+        var color3 = carColorRepository.findById(2).get();
         var passport3 = AutoPassport.builder()
                 .original(true)
                 .owners(Set.of(owner3))
                 .build();
         var car3 = Car.builder()
-//                .color("white")
-                .model("Tesla")
-                .mileage(88000)
+                .model("Exceed")
+                .mileage(1000)
                 .build();
         car3.setBody(body3);
         car3.setEngine(engine3);
         car3.setPassport(passport3);
+        car3.setCarColor(color3);
+        car3.setBrand(carBrand3);
+        var file3 = File.builder()
+                .name("Test car 3")
+                .path("/testpath_3")
+                .build();
         var priceHistory3 = PriceHistory.builder()
                 .created(currentLocalDateTime)
-                .before(0L)
-                .after(200L)
+                .before(1L)
+                .after(2L)
                 .build();
         var post3 = Post.builder()
                 .price(0L)
-                .title("Test electro title")
-                .created(currentLocalDateTime.minusHours(8))
-                .description("Test3 description")
+                .title("Test sale Cherry")
+                .created(currentLocalDateTime)
+                .description("Test description")
                 .sold(false)
-                .build();
-        var file3 = File.builder()
-                .name("Test1")
-                .path("/test1_path")
                 .build();
         post3.setFiles(Set.of(file3));
         post3.setPriceHistory(List.of(priceHistory3));
         post3.setCar(car3);
-        postRepository.create(post);
-        postRepository.create(post2);
         postRepository.create(post3);
-        var expected = List.of(post, post3);
+        var expected = List.of(post2, post3);
         var actual = postRepository.findAllLastDay();
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    void whenAddThreePostsThenGetTwoOfThemWithModelNameContainedLada() {
+    void whenAddThreePostsThenGetTwoOfThemWithModelNameContainedConceptWord() {
         var currentLocalDateTime = LocalDateTime.now(ZoneId.of("UTC")).truncatedTo(ChronoUnit.MINUTES);
         var owner = Owner.builder()
-                .name("owner")
+                .name("Eddie")
                 .start(currentLocalDateTime.minusDays(1))
                 .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
-        var engine = Engine.builder()
-//                .type("diesel")
-                .capacity(6.5F)
-                .horsePower(280)
-                .build();
-        var body = Body.builder()
-//                .body("pickup")
-                .build();
+        var engine = engineRepository.findById(1).get();
+        var body = bodyRepository.findById(1).get();
+        var carBrand = carBrandRepository.findById(1).get();
+        var color = carColorRepository.findById(1).get();
         var passport = AutoPassport.builder()
                 .original(true)
                 .owners(Set.of(owner))
                 .build();
         var car = Car.builder()
-//                .color("red")
-                .model("Ford F150")
+                .model("Concept cqr1")
                 .mileage(88000)
                 .build();
         car.setBody(body);
         car.setEngine(engine);
         car.setPassport(passport);
-        var owner2 = Owner.builder()
-                .name("owner 2")
-                .start(currentLocalDateTime.minusDays(10))
-                .end(currentLocalDateTime)
+        car.setCarColor(color);
+        car.setBrand(carBrand);
+        var file = File.builder()
+                .name("Test car")
+                .path("/testpath")
                 .build();
-        var passport2 = AutoPassport.builder()
-                .original(false)
-                .owners(Set.of(owner2))
-                .build();
-        var engine2 = Engine.builder()
-//                .type("gasoline")
-                .capacity(1.6F)
-                .horsePower(110)
-                .build();
-        var body2 = Body.builder()
-//                .body("sedan")
-                .build();
-        var car2 = Car.builder()
-//                .color("yellow")
-                .model("Lada Vesta")
-                .mileage(56000)
-                .build();
-        car2.setPassport(passport2);
-        car2.setBody(body2);
-        car2.setEngine(engine2);
         var priceHistory = PriceHistory.builder()
                 .created(currentLocalDateTime)
                 .before(1L)
@@ -530,81 +498,101 @@ class PostRepositoryImplTest {
                 .build();
         var post = Post.builder()
                 .price(0L)
-                .title("Test title")
-                .created(currentLocalDateTime.minusHours(2))
+                .title("Test sale Crown")
+                .created(currentLocalDateTime.minusDays(10))
                 .description("Test description")
                 .sold(false)
                 .build();
-        post.setFiles(emptySet());
+        post.setFiles(Set.of(file));
         post.setPriceHistory(List.of(priceHistory));
         post.setCar(car);
-        var file2 = File.builder()
-                .name("Test file")
-                .path("/test")
-                .build();
-        var priceHistory2 = PriceHistory.builder()
-                .created(currentLocalDateTime)
-                .before(10L)
-                .after(200L)
-                .build();
-        var post2 = Post.builder()
-                .created(currentLocalDateTime.minusDays(10))
-                .sold(true)
-                .title("Fast sale Lada!")
-                .description("Fast please!")
-                .build();
-        post2.setCar(car2);
-        post2.setPriceHistory(List.of(priceHistory2));
-        post2.setFiles(Set.of(file2));
-        var owner3 = Owner.builder()
-                .name("owner3")
+        postRepository.create(post);
+        var owner2 = Owner.builder()
+                .name("Consta")
                 .start(currentLocalDateTime.minusDays(1))
                 .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
                 .build();
-        var engine3 = Engine.builder()
-//                .type("electro")
-                .capacity(6.5F)
-                .horsePower(280)
+        var engine2 = engineRepository.findById(2).get();
+        var body2 = bodyRepository.findById(1).get();
+        var carBrand2 = carBrandRepository.findById(2).get();
+        var color2 = carColorRepository.findById(1).get();
+        var passport2 = AutoPassport.builder()
+                .original(true)
+                .owners(Set.of(owner2))
                 .build();
-        var body3 = Body.builder()
-//                .body("hatchback")
+        var car2 = Car.builder()
+                .model("Concept car")
+                .mileage(88000)
                 .build();
+        car2.setBody(body2);
+        car2.setEngine(engine2);
+        car2.setPassport(passport2);
+        car2.setCarColor(color2);
+        car2.setBrand(carBrand2);
+        var file2 = File.builder()
+                .name("Test car 2")
+                .path("/testpath_2")
+                .build();
+        var priceHistory2 = PriceHistory.builder()
+                .created(currentLocalDateTime)
+                .before(1L)
+                .after(2L)
+                .build();
+        var post2 = Post.builder()
+                .price(0L)
+                .title("Test sale VW")
+                .created(currentLocalDateTime)
+                .description("Test description")
+                .sold(false)
+                .build();
+        post2.setFiles(Set.of(file2));
+        post2.setPriceHistory(List.of(priceHistory2));
+        post2.setCar(car2);
+        postRepository.create(post2);
+        var owner3 = Owner.builder()
+                .name("Marina")
+                .start(currentLocalDateTime.minusDays(1))
+                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
+                .build();
+        var engine3 = engineRepository.findById(2).get();
+        var body3 = bodyRepository.findById(3).get();
+        var carBrand3 = carBrandRepository.findById(3).get();
+        var color3 = carColorRepository.findById(2).get();
         var passport3 = AutoPassport.builder()
                 .original(true)
                 .owners(Set.of(owner3))
                 .build();
         var car3 = Car.builder()
-//                .color("white")
-                .model("Lada Largus E")
-                .mileage(88000)
+                .model("Exceed")
+                .mileage(1000)
                 .build();
         car3.setBody(body3);
         car3.setEngine(engine3);
         car3.setPassport(passport3);
+        car3.setCarColor(color3);
+        car3.setBrand(carBrand3);
+        var file3 = File.builder()
+                .name("Test car 3")
+                .path("/testpath_3")
+                .build();
         var priceHistory3 = PriceHistory.builder()
                 .created(currentLocalDateTime)
-                .before(0L)
-                .after(200L)
+                .before(1L)
+                .after(2L)
                 .build();
         var post3 = Post.builder()
                 .price(0L)
-                .title("Test electro title")
-                .created(currentLocalDateTime.minusHours(8))
-                .description("Test3 description")
+                .title("Test sale Cherry")
+                .created(currentLocalDateTime)
+                .description("Test description")
                 .sold(false)
-                .build();
-        var file3 = File.builder()
-                .name("Test1")
-                .path("/test1_path")
                 .build();
         post3.setFiles(Set.of(file3));
         post3.setPriceHistory(List.of(priceHistory3));
         post3.setCar(car3);
-        postRepository.create(post);
-        postRepository.create(post2);
         postRepository.create(post3);
-        var expected = List.of(post2, post3);
-        var actual = postRepository.findAllByName("Lada");
+        var expected = List.of(post, post2);
+        var actual = postRepository.findAllByName("Concept");
         assertThat(actual).isEqualTo(expected);
     }
 }
