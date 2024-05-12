@@ -11,7 +11,7 @@
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.connection.password">Okhorzina2912</property>
         <!--    Размер пула увеличил до 10. 1 оказалось мало-->
-        <property name="hibernate.connection.pool_size">10</property>
+        <property name="hibernate.connection.pool_size">100</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <!--    Показывать SQL запросы, которые формирует Hibernate-->
         <property name="hibernate.show_sql">true</property>

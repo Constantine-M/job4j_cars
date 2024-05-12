@@ -50,6 +50,7 @@ public class Post {
      * Одно объявление - одна машина.
      */
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "car_id", foreignKey = @ForeignKey(name = "CAR_ID_FK"))
     private Car car;
 
     /**
@@ -71,11 +72,11 @@ public class Post {
      */
     @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "auto_post_id")
+    @JoinColumn(name = "auto_post_id", foreignKey = @ForeignKey(name = "AUTO_POST_ID_FK"))
     private List<PriceHistory> priceHistory = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "auto_post_id")
+    @JoinColumn(name = "auto_post_id", foreignKey = @ForeignKey(name = "AUTO_POST_ID_FK"))
     private Set<File> files = new HashSet<>();
 
     /**

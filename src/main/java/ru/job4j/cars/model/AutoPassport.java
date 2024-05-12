@@ -31,7 +31,18 @@ public class AutoPassport {
     /** ПТС оригинал или дубликат */
     boolean original;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    /**
+     * Так как в ПТС содержится не более
+     * шести владельцев, то в данном случае
+     * мы установили стратегию загрузки
+     * {@link FetchType#EAGER}.
+     *
+     * Считаю, что накладные расходы
+     * небольшие и позволяет решить
+     * текущую проблему с обновлением
+     * {@link Post}.
+     */
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "auto_passport_id")
     private Set<Owner> owners = new HashSet<>();
 }
