@@ -4,12 +4,18 @@
     <!--  Зависимости Bootstrap-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link th:href = "@{/css/bootstrap.min.css}" rel="stylesheet">
-    <script th:src="@{/js/code.jquery.com_jquery-3.7.1.min.js}"></script>
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-    <!--    Чтобы работал выпадающий список в навигационной панели, требуется
-            добавить эту зависимость, иначе ничего выпадать не будет!   -->
-    <script th:src="@{/js/bootstrap.bundle.js}"></script>
+
+    <script th:src="@{/bootstrap-5.3.3-dist/js/bootstrap.js}"></script>
+    <!--    Здесь я заменил bootstrap.min.css локальный на вариант CDN.
+            По сути можно использовать тот и другой вариант. Оба работают-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+
+    <!--    Верхняя ссылка почему-то не работает с аккордеонами.
+            Поэтому я полдня игрался с CDN и прочей фигней и случайно
+            решил проблему. Но теперь не работает кнопка с выпадающим
+            меню!-->
+    <script href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!--    Здесь я задал стиль для body и футера таким образом,
             чтобы наш футер всегда был внизу, вне зависимости от того,
@@ -37,14 +43,22 @@
             <!--  Выражение th:action="@{/users/register}" направляет форму к POST запросу /users/register-->
             <form class="mt-3" style="font-size: 14px" th:action="@{/users/register}" method="post">
                 <div class="mb-3">
-                    <!--    Здесь мы делаем подпись для формы.
-                            <label for="name" - здесь name - это ключ-->
-                    <label for="name" class="form-label"><b>Name</b></label>
-                    <!--    Формы передают данные в виде ключ-значение. Ключ указывается с помощью атрибута name. Его можно и по-другому назвать.
-                            Т.к. известен ключ и название поля объекта, их можно сопоставить (Mapping). Эта идея реализована в Spring MVC.
-                            id="name" - это ключ
-                            name="fullName" - это значение. Заметь, fullName - это одно из полей модели User-->
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Consta Mezenin" required>
+                    <div class="row">
+                        <div class="col-6">
+                            <!--    Здесь мы делаем подпись для формы.
+                                    <label for="name" - здесь name - это ключ-->
+                            <label for="name" class="form-label"><b>Name</b></label>
+                            <!--    Формы передают данные в виде ключ-значение. Ключ указывается с помощью атрибута name. Его можно и по-другому назвать.
+                                    Т.к. известен ключ и название поля объекта, их можно сопоставить (Mapping). Эта идея реализована в Spring MVC.
+                                    id="name" - это ключ
+                                    name="username" - это значение. Заметь, username - это одно из полей модели User-->
+                            <input type="text" class="form-control" id="name" name="username" placeholder="Consta Mezenin" required>
+                        </div>
+                        <div class="col-6">
+                            <label for="phone" class="form-label"><b>Phone number</b></label>
+                            <input type="text" class="form-control" id="phone" name="phoneNumber" placeholder="+7" required>
+                        </div>
+                    </div>
                 </div>
                 <!--    Для почты была прописана валидация на стороне сервера.
                         Здесь мы указали, что поле недопустимо с помощью "is-invalid".
@@ -76,8 +90,8 @@
                     <div class="col-6"></div>
                     <div class="col-6 mt-3">
                         <div class="row">
-                            <div class="col-6"><a class="btn btn-danger w-100" th:href="@{/index}">Cancel</a></div>
-                            <div class="col-6"><button class="btn btn-primary w-100" type="submit">Register</button></div>
+                            <div class="col-6"><a class="btn btn-outline-danger w-100" th:href="@{/index}">Cancel</a></div>
+                            <div class="col-6"><button class="btn btn-outline-success w-100" type="submit">Register</button></div>
                         </div>
                     </div>
                 </div>

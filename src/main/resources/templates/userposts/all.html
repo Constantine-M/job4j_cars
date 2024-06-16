@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!--  Зависимости Bootstrap-->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!--    <link th:href="@{/bootstrap-5.3.3-dist/css/bootstrap.min.css}" rel="stylesheet">-->
+        <script th:src="@{/bootstrap-5.3.3-dist/js/bootstrap.js}"></script>
+        <!--    Чтобы работал выпадающий список в навигационной панели, требуется
+                добавить эту зависимость, иначе ничего выпадать не будет!
+                bootstrap.bundle.js содержит в себе Popper.js, благодаря
+                которому работают всякие выпадающие списки  -->
+        <!--    <script th:src="@{/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js}"></script>-->
+
+
+        <!--    Здесь я заменил bootstrap.min.css локальный на вариант CDN.
+                По сути можно использовать тот и другой вариант. Оба работают-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+
+        <!--    Верхняя ссылка почему-то не работает с аккордеонами.
+                Поэтому я полдня игрался с CDN и прочей фигней и случайно
+                решил проблему. Но теперь не работает кнопка с выпадающим
+                меню!-->
+        <script href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!--    Здесь я задал стиль для body и футера таким образом,
+                чтобы наш футер всегда был внизу, вне зависимости от того,
+                много контента на странице или мало-->
+        <style>
+            body {
+                min-height: 100vh;
+            }
+            footer {
+                position: sticky;
+                top: 100%;
+            }
+        </style>
+
+        <title>All posts</title>
+    </head>
+    <link rel="shortcut icon" th:href="@{/images/car_logo_4.png}"/>
+    <body>
+    <!--    С помощью тега <header> и атрибута insert мы вставляем общий компонент страницы (блок навигации, который мы вынесли отдельно)-->
+    <header th:insert="blocks/header :: header"></header>
+    <div class="mt-5 container">
+        <div class="mt-5 row justify-content-around">
+            <div class="col-10">
+                <table class="table table-fixed table-borderless caption-top">
+                    <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="post: ${userPosts}">
+                        <td style="width: 50px;">
+                            <div class="row">
+                                <a class="mb-4" th:href="@{/userposts/edit/{id}(id=${post.id})}">
+                                    <img th:src="@{/images/icon-edit.png}" height="40" width="40" alt=""/>
+                                </a>
+                                <a class="mb-4" th:href="@{/userposts/close/{id}(id=${post.id})}">
+                                    <img th:src="@{/images/icon-lock.png}" height="40" width="40" alt=""/>
+                                </a>
+                                <a th:href="@{/userposts/delete/{id}(id=${post.id})}">
+                                    <img th:src="@{/images/icon-delete3.png}" height="40" width="40" alt=""/>
+                                </a>
+                            </div>
+                        </td>
+                        <!--    <td class="w-50"> - здесь w-50 означает ширину колонки таблицы.
+                                Для каждой колонки нужно указывать ширину. Я сделал 2 колонки с шириной
+                                по 50 и получил 2 равные по ширине колонки-->
+                        <td style="width: 400px;">
+                            <div th:id="'carousel-' + ${post.id}" class="carousel slide" data-bs-theme="dark">
+                                <div class="carousel-inner">
+                                    <div th:each="file: ${post.files}">
+                                        <div class="carousel-item active">
+                                            <img class="rounded mx-auto d-block " th:src="@{/files/{id}(id=${file.id})}" alt="No image" style="max-width: 100%; max-height: 100%;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" th:attr="data-bs-target='#' + ${'carousel-' + post.id}" data-bs-target="#carouselExample" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Предыдущий</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" th:attr="data-bs-target='#' + ${'carousel-' + post.id}" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Следующий</span>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="w-auto">
+                            <div class="row mb-5">
+                                <div class="col">
+                                    <!--    Если машина продана или закрыто объявление, то будет пометка "SOLD"-->
+                                    <div th:switch="${post.isSold()}">
+                                        <a th:case="false">
+                                            <span style="font-size: 18px; text-decoration:none" th:text="${post.carBrand + ' ' + post.model}"></span>
+                                        </a>
+                                        <a th:case="true">
+                                            <span style="font-size: 18px; text-decoration:none" th:text="${post.carBrand + ' ' + post.model}"></span>
+                                            <b><span style="color: #842029; font-size: 22px">  SOLD</span></b>
+                                        </a>
+                                    </div>
+                                    <br><span></span></br>
+                                    <span th:text="${'Engine: ' + post.engineCapacity + 'L' + ' / ' + post.engineHorsePower + 'HP' + ' / ' + post.engineFuelType}"></span><br>
+                                    <span th:text="${'Gearbox: ' + post.gearBox}"></span><br>
+                                    <span th:text="${'Body type: ' + post.carBody}"></span>
+                                </div>
+                                <div class="col">
+                                    <span style="font-size: 18px" th:text="${post.price + ' RUB'}"></span>
+                                    <br><span></span></br>
+                                    <span th:text="${'Year: ' + post.carYear}"></span><br>
+                                    <span th:text="${'Mileage: ' + post.mileage + ' km'}"></span><br>
+                                    <span th:text="${'Color: ' + post.carColor}"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-5">
+                                <span th:text="${'Created at : ' + #temporals.format(post.created, 'dd/MM/yyyy')}"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--    Вызов Footer добавляется в конце HTML страницы -->
+    <footer th:insert="blocks/footer :: footer"></footer>
+    </body>
+</html>

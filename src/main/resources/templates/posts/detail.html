@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!--  Зависимости Bootstrap-->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!--    <link th:href="@{/bootstrap-5.3.3-dist/css/bootstrap.min.css}" rel="stylesheet">-->
+        <script th:src="@{/bootstrap-5.3.3-dist/js/bootstrap.js}"></script>
+        <!--    Чтобы работал выпадающий список в навигационной панели, требуется
+                добавить эту зависимость, иначе ничего выпадать не будет!
+                bootstrap.bundle.js содержит в себе Popper.js, благодаря
+                которому работают всякие выпадающие списки  -->
+        <!--    <script th:src="@{/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js}"></script>-->
+
+
+        <!--    Здесь я заменил bootstrap.min.css локальный на вариант CDN.
+                По сути можно использовать тот и другой вариант. Оба работают-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+
+        <!--    Верхняя ссылка почему-то не работает с аккордеонами.
+                Поэтому я полдня игрался с CDN и прочей фигней и случайно
+                решил проблему. Но теперь не работает кнопка с выпадающим
+                меню!-->
+        <script href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!--    Здесь я задал стиль для body и футера таким образом,
+                чтобы наш футер всегда был внизу, вне зависимости от того,
+                много контента на странице или мало-->
+        <style>
+            body {
+                min-height: 100vh;
+            }
+            footer {
+                position: sticky;
+                top: 100%;
+            }
+        </style>
+
+        <title>More info</title>
+    </head>
+    <body>
+    <!--    С помощью тега <header> и атрибута insert мы вставляем общий компонент страницы (блок навигации, который мы вынесли отдельно)-->
+    <header th:insert="blocks/header :: header"></header>
+    <div class="mt-5 container mb-5">
+        <div class="mt-5 row justify-content-around">
+            <div class="row col-10">
+                <table class="table table-fixed caption-top table-borderless">
+                    <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <!--    <td class="w-50"> - здесь w-50 означает ширину колонки таблицы.
+                                Для каждой колонки нужно указывать ширину. Я сделал 2 колонки с шириной
+                                по 50 и получил 2 равные по ширине колонки-->
+                        <td class="w-75">
+                            <div id="carouselExample" class="carousel slide" data-bs-theme="dark">
+                                <div class="carousel-inner">
+                                    <div th:each="file: ${post.files}">
+                                        <div class="carousel-item active">
+                                            <img class="rounded mx-auto d-block w-75" th:src="@{/files/{id}(id=${file.id})}" alt="No image">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Предыдущий</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Следующий</span>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="w-auto">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <b><span style="font-size: 22px" th:text="${post.getCar().brand.name + ' ' + post.getCar().model}"></span></b>
+                                    <br><span></span></br>
+                                    <span><b>Engine: </b></span><span th:text="${post.getCar().engine.capacity + 'L' + ' / ' + post.car.engine.horsePower + 'HP' + ' / ' + post.car.engine.fuelType}"></span><br>
+                                    <span><b>Mileage: </b></span><span th:text="${post.car.mileage + ' km'}"></span><br>
+                                    <span><b>Gearbox: </b></span><span th:text="${post.car.gearBox.name}"></span><br>
+                                    <span><b>Body type: </b></span><span th:text="${post.car.body.name}"></span><br>
+                                    <span><b>Year: </b></span><span th:text="${post.car.carYear}"></span><br>
+                                    <span><b>Color: </b></span><span th:text="${post.car.carColor.name}"></span>
+                                    <br><span></span></br>
+                                    <span style="font-size: 22px" th:text="${post.price + ' RUB'}"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div><span><b>Contacts: </b></span><span th:text="${post.user.username}"></span></div>
+                                <div><span><b>Phone: </b></span><span th:text="${post.user.phoneNumber}"></span></div><br>
+                                <div><span><b>Created at : </b></span><span th:text="${#temporals.format(post.created, 'dd/MM/yyyy')}"></span></div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="mt-3">
+                    <label for="description" class="form-label"></label>
+                    <!--   Аттрибут "rows" позволяет выбирать произвольную высоту формы.
+                           Т.е. пользователь сам меняет размер формы оп высоте.
+                           Если требуется выставить конкретную высоту формы, то следует использовать
+                           аттрибут style="height: 300px" например-->
+                    <textarea class="form-control" id="description" name="description" style="height: 100px" placeholder="The author’s comments are missing" th:text="${post.description}" readonly></textarea>
+                </div>
+            </div>
+            <div class="row col-10 mt-1">
+                <!--    Отсюда начинается блок аккордеона - такой блок, который можно свернуть.-->
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"  aria-controls="collapseOne">
+                                Technical passport
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse"  style="">
+                            <div class="accordion-body">
+                                <div class="mb-2">
+                                    <span><b>Car was bought at: </b></span><span th:text="${#temporals.format(post.car.passport.boughtAt, 'dd/MM/yyyy')}"></span>
+                                </div>
+                                <div class="mb-2">
+                                    <span><b>Passport type: </b></span><span th:text="${post.car.passport.havingPassport}"></span>
+                                </div>
+                                <div>
+                                    <div th:switch="${post.car.passport.cleared}">
+                                        <div th:case="true">
+                                            <span><b>Customs clearance: </b></span><span th:text="' car is cleared through customs'"></span>
+                                        </div>
+                                        <div th:case="false">
+                                            <span><b>Customs clearance: </b></span><span th:text="' no, car must be clear'"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row col-10 mt-1 mb-5">
+                <!--    Отсюда начинается блок аккордеона - такой блок, который можно свернуть.-->
+                <div class="accordion mb-5  " id="accordionSecondExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"  aria-controls="collapseTwo">
+                                Dynamics of changes in the cost of car (RUB)
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse"  style="">
+                            <div class="accordion-body">
+                                <div class="d-flex flex-row" th:each="price: ${priceDynamicList}">
+                                    <div class="p-2" th:text="${'Before: ' + price.before}"></div>
+                                    <div class="p-2" th:text="${'After: ' + price.after}"></div>
+                                    <div class="p-2" th:text="${'at ' + #temporals.format(price.created, 'dd/MM/yyyy HH:mm')}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row col-10 mt-1 mb-5 justify-content-around">
+                <a class="col-3 btn btn-outline-success" onclick="history.back()">Back to list </a>
+            </div>
+
+
+<!--            <div class="row col-10 mt-5 mb-5" th:switch="loggedUser=${user.login}" th:with="postAutoUser=${post.user.login}">-->
+<!--                <div class="row" th:case="${post.user.login}">-->
+<!--                    <div class="col-6"></div>-->
+<!--                    <div class="col-6">-->
+<!--                        <div class="row justify-content-end">-->
+<!--                            <div class="col-3">-->
+<!--                                <a class="btn btn-outline-danger " onclick="history.back()"> < Back</a>-->
+<!--                            </div>-->
+<!--                            <div class="col-3">-->
+<!--                                <a class="btn btn-outline-info " th:href="@{/posts/edit/{id}(id=${post.id})}">Edit</a>-->
+<!--                            </div>-->
+<!--                            <div class="col-3">-->
+<!--                                <a class="btn btn-outline-success " th:href="@{/posts/sold}">Close add ></a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+    </div>
+    <!--    Вызов Footer добавляется в конце HTML страницы -->
+    <footer th:insert="blocks/footer :: footer"></footer>
+    </body>
+</html>

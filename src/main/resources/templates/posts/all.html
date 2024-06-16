@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+    <head>
+        <!--  Зависимости Bootstrap-->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--    <link th:href="@{/bootstrap-5.3.3-dist/css/bootstrap.min.css}" rel="stylesheet">-->
+        <script th:src="@{/bootstrap-5.3.3-dist/js/bootstrap.js}"></script>
+        <!--    Чтобы работал выпадающий список в навигационной панели, требуется
+                добавить эту зависимость, иначе ничего выпадать не будет!
+                bootstrap.bundle.js содержит в себе Popper.js, благодаря
+                которому работают всякие выпадающие списки  -->
+    <!--    <script th:src="@{/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js}"></script>-->
+
+
+        <!--    Здесь я заменил bootstrap.min.css локальный на вариант CDN.
+                По сути можно использовать тот и другой вариант. Оба работают-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+
+        <!--    Верхняя ссылка почему-то не работает с аккордеонами.
+                Поэтому я полдня игрался с CDN и прочей фигней и случайно
+                решил проблему. Но теперь не работает кнопка с выпадающим
+                меню!-->
+        <script href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!--    Здесь я задал стиль для body и футера таким образом,
+                чтобы наш футер всегда был внизу, вне зависимости от того,
+                много контента на странице или мало-->
+        <style>
+            body {
+                min-height: 100vh;
+            }
+            footer {
+                position: sticky;
+                top: 100%;
+            }
+        </style>
+
+        <title>All posts</title>
+    </head>
+    <link rel="shortcut icon" th:href="@{/images/car_logo_4.png}"/>
+    <body>
+    <!--    С помощью тега <header> и атрибута insert мы вставляем общий компонент страницы (блок навигации, который мы вынесли отдельно)-->
+    <header th:insert="blocks/header :: header"></header>
+    <div class="mt-5 container">
+        <div class="mt-3 row justify-content-around">
+            <div class="col-10 ">
+                <!--    Отсюда начинается блок аккордеона - такой блок, который можно
+                        свернуть. Там я спрячу форму для поиска и сделаю фильтр поиска
+                        по нескольким параметрам-->
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"  aria-controls="collapseOne">
+                                Advanced search
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse"  style="">
+                            <div class="accordion-body">
+                                <form th:action="@{/posts}">
+                                    <div class="row justify-content-between">
+                                        <div class="col-3 mb-3">
+                                            <label for="brand">Choose brand</label>
+                                            <!--    Чтобы добавить значение по умолчанию, нужно добавить еще
+                                                    один option и, например, присвоить ему 0, что мне и требовалось-->
+                                            <select class="form-control" id="brand" name="car.brand.id">
+                                                <option th:value="0">Select a brand</option>
+                                                <option th:each="brand : ${carBrand}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-3 mb-3">
+                                            <label for="carModel"> Enter model name</label>
+                                            <input type="text" class="form-control" id="carModel" name="car.model" placeholder="Camry">
+                                        </div>
+                                        <div class="col-3 mb-3">
+                                            <label for="body">Choose body type</label>
+                                            <!--    Передаем в name body.id, т.к. потом в SimplePostService, когда
+                                                    будем собирать Car, мы будем искать наш Body по айди-->
+                                            <select class="form-control" id="body" name="car.body.id">
+                                                <option th:value="0">Select a body</option>
+                                                <option th:each="body : ${body}" th:value="${body.id}" th:text="${body.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-between">
+                                        <div class="col-3 mb-3">
+                                            <label for="mile">Mileage (less or eq)</label>
+                                            <input type="number" class="form-control" id="mile" name="car.mileage" th:value="0" placeholder="43567">
+                                        </div>
+                                        <div class="col-3 mb-3">
+                                            <label for="minPrice">Min price</label>
+                                            <!--    Здесь лучше указать th:value="0". Без него будет будет
+                                                    больше ошибок при прохождении через SearchValidator.
+                                                    К сожалению placeholder не будет видим. Для юзера
+                                                    будет отображаться 0-->
+                                            <input type="number" class="form-control" id="minPrice" name="lowestPrice" th:value="0" placeholder="1">
+                                        </div>
+                                        <div class="col-3 mb-3">
+                                            <label for="maxPrice">Max price</label>
+                                            <input type="number" class="form-control" id="maxPrice" name="highestPrice" th:value="0" placeholder="9999999">
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-between">
+                                        <div class="col-3">
+                                            <label for="createdBefore" class="form-label">All ads for the last ... days</label>
+                                            <input type="number" class="form-control" id="createdBefore" name="createdDaysBefore" th:value="0" placeholder="7">
+                                        </div>
+                                        <div class="col-3">
+                                            <br>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="fileExists" id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                    Only with files
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <br>
+                                            <button class="btn btn-outline-success w-100" type="submit">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 mb-5 row justify-content-around">
+            <div class="col-10">
+                <table class="table table-fixed table-borderless caption-top">
+                    <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!--    Если список posts пуст, выводится строка таблицы с сообщением об отсутствии совпадений-->
+                    <tr th:if="${posts.size() == 0}">
+                        <td colspan="2" class="text-center">
+                            <div class="alert alert-warning" role="alert">
+                                No match found. Sorry :(
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="mb-5" th:each="post : ${posts}">
+                        <!--    <td class="w-50"> - здесь w-50 означает ширину колонки таблицы.
+                                Для каждой колонки нужно указывать ширину. Я сделал 2 колонки с шириной
+                                по 50 и получил 2 равные по ширине колонки.
+                                А если хочешь указать ширину тока одной колонки, то задавай стиль
+                                для одной колонки, а для другой напиши <td class="w-auto">.
+                                Чтобы кнопки перелистывания картинок для каждой карусели были
+                                свои, нужно чтобы значения id и аттрибута data-bs-target были
+                                уникальными. Для этого используем thymeleaf и добавим такие строки:
+                                th:id="'carousel-' + ${post.id}"
+                                th:attr="data-bs-target='#' + ${'carousel-' + post.id}"-->
+                        <td style="width: 450px;" >
+                                <div th:id="'carousel-' + ${post.id}" class="carousel slide" data-bs-theme="dark">
+                                    <div class="carousel-inner">
+                                        <div th:each="file: ${post.files}">
+                                            <div class="carousel-item active">
+                                                <img class="rounded mx-auto d-block " th:src="@{/files/{id}(id=${file.id})}" alt="No image" style="max-width: 100%; max-height: 100%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" th:attr="data-bs-target='#' + ${'carousel-' + post.id}" data-bs-target="#carouselExample" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Предыдущий</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" th:attr="data-bs-target='#' + ${'carousel-' + post.id}" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Следующий</span>
+                                    </button>
+                                </div>
+                        </td>
+                        <td class="w-auto">
+                            <div class="row mb-5">
+                                <div class="col">
+                                    <!--    Если машина продана или закрыто объявление, то будет пометка "SOLD"-->
+                                    <div th:switch="${post.isSold()}">
+                                        <a th:case="false">
+                                            <b><a style="font-size: 22px; text-decoration:none" th:text="${post.carBrand + ' ' + post.model}"
+                                                  th:href="@{/posts/{id}(id=${post.id})}"></a></b>
+                                        </a>
+                                        <a th:case="true">
+                                            <b><span style="font-size: 22px; text-decoration:none" th:text="${post.carBrand + ' ' + post.model}"
+                                                  th:href="@{/posts/{id}(id=${post.id})}"></span></b>
+                                            <span style="color: #842029; font-size: 22px">  SOLD</span>
+                                        </a>
+                                    </div>
+                                    <span th:text="${'Engine: ' + post.engineCapacity + 'L' + ' / ' + post.engineHorsePower + 'HP' + ' / ' + post.engineFuelType}"></span><br>
+                                    <span th:text="${'Gearbox: ' + post.gearBox}"></span><br>
+                                    <span th:text="${'Body type: ' + post.carBody}"></span>
+                                </div>
+                                <div class="col">
+                                    <span style="font-size: 22px" th:text="${post.price + ' RUB'}"></span>
+                                    <br><span></span></br>
+                                    <span th:text="${'Year: ' + post.carYear}"></span><br>
+                                    <span th:text="${'Mileage: ' + post.mileage + ' km'}"></span><br>
+                                    <span th:text="${'Color: ' + post.carColor}"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-5">
+                                <span th:text="${post.summary}"></span>
+                            </div>
+                            <div class="row mt-4">
+                                <span th:text="${'Created at : ' + #temporals.format(post.created, 'dd/MM/yyyy')}"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--    Вызов Footer добавляется в конце HTML страницы -->
+    <footer class="mt-5" th:insert="blocks/footer :: footer"></footer>
+    </body>
+</html>

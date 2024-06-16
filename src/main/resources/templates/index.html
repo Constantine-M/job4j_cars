@@ -5,12 +5,17 @@
     <!--  Зависимости Bootstrap-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link th:href = "@{/css/bootstrap.min.css}" rel="stylesheet">
-    <script th:src="@{/js/code.jquery.com_jquery-3.7.1.min.js}"></script>
-    <script th:src="@{/js/bootstrap.min.js}"></script>
-    <!--    Чтобы работал выпадающий список в навигационной панели, требуется
-            добавить эту зависимость, иначе ничего выпадать не будет!   -->
-    <script th:src="@{/js/bootstrap.bundle.js}"></script>
+    <script th:src="@{/bootstrap-5.3.3-dist/js/bootstrap.js}"></script>
+    <!--    Здесь я заменил bootstrap.min.css локальный на вариант CDN.
+            По сути можно использовать тот и другой вариант. Оба работают-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+
+    <!--    Верхняя ссылка почему-то не работает с аккордеонами.
+            Поэтому я полдня игрался с CDN и прочей фигней и случайно
+            решил проблему. Но теперь не работает кнопка с выпадающим
+            меню!-->
+    <script href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!--    Здесь я задал стиль для body и футера таким образом,
             чтобы наш футер всегда был внизу, вне зависимости от того,
@@ -27,9 +32,8 @@
 
     <title>Main</title>
 </head>
-<!--    Эта строка позволяет добавить иконку сайта. Главное, чтобы картинка была доступна.
-        Один раз здесь написал и хватит - на других страницах она не нужна-->
-<link rel="shortcut icon" th:href="@{/images/lowrider_logo3.png}"/>
+<!--    Эта строка позволяет добавить иконку сайта. Главное, чтобы картинка была доступна-->
+<link rel="shortcut icon" th:href="@{/images/car_logo_4.png}"/>
 <body>
 <div class="container-fluid p-0 mb-5">
     <!--    С помощью тега <header> и атрибута insert мы вставляем общий компонент страницы (блок навигации, который мы вынесли отдельно)-->
@@ -43,6 +47,10 @@
         <ul>
             <li><a th:href="@{/index}">This is a root page. You're here</a></li>
             <li><a th:href="@{/posts}">There are all ads for the sale of used cars</a></li>
+            <li><a th:href="@{/userposts/all}">There are all ads created by You. You need to log in!</a></li>
+            <li><a th:href="@{/userposts/create}">There is page, where you can create your own post. You need to log in!</a></li>
+            <li><a th:href="@{/users/login}">Login page</a></li>
+            <li><a th:href="@{/users/register}">Registration page</a></li>
         </ul>
     </div>
 </div>
