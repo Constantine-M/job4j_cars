@@ -7,17 +7,15 @@ import ru.job4j.cars.dto.FileDto;
 import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.exception.SimpleServiceException;
 import ru.job4j.cars.model.File;
-import ru.job4j.cars.model.Post;
 import ru.job4j.cars.repository.file.FileRepository;
-import ru.job4j.cars.repository.post.PostRepository;
 import ru.job4j.cars.service.post.SimplePostService;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -28,8 +26,6 @@ import java.util.UUID;
 public class SimpleFileService implements FileService {
 
     private final FileRepository fileRepository;
-
-    private final PostRepository postRepository;
 
     private final String storageDirectory;
 
@@ -42,10 +38,8 @@ public class SimpleFileService implements FileService {
      * с ключом file.directory.
      */
     public SimpleFileService(FileRepository fileRepository,
-                             PostRepository postRepository,
                              @Value("${file.directory}") String storageDirectory) {
         this.fileRepository = fileRepository;
-        this.postRepository = postRepository;
         this.storageDirectory = storageDirectory;
         createStorageDirectory(storageDirectory);
     }
@@ -103,6 +97,9 @@ public class SimpleFileService implements FileService {
         }
     }
 
+    /**
+     * Найти файл по ID.
+     */
     @Override
     public Optional<FileDto> findById(int id) throws SimpleServiceException {
         try {
@@ -113,22 +110,6 @@ public class SimpleFileService implements FileService {
             log.error("Can't find file with id = {}" + id, Arrays.toString(e.getStackTrace()));
             throw new SimpleServiceException("Can't find file", e);
         }
-    }
-
-    /**
-     * Найти все файлы, которые связаны с постом по id.
-     *
-     * @param postId ID объявления о продаже
-     * @return список файлов
-     */
-    @Override
-    public Collection<FileDto> findAllAttachedToPost(int postId) {
-        var post = postRepository.findById(postId);
-        var files = post.get().getFiles();
-        return files.stream().map(file -> {
-            var content = readFileAsBytes(file.getPath());
-            return new FileDto(file.getName(), content);
-        }).toList();
     }
 
     /**
@@ -143,5 +124,54 @@ public class SimpleFileService implements FileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Удалить файл по ID.
+     *
+     * Сначала удаляем данные, а
+     * потом объект DTO из карты по его ID.
+     */
+    @Override
+    public void deleteById(int id) throws SimpleServiceException {
+        try {
+            var fileOptional = fileRepository.findById(id);
+            deleteFile(fileOptional.get().getPath());
+            fileRepository.deleteById(id);
+        } catch (RepositoryException e) {
+            log.error("Can't find file with id = {}" + id, Arrays.toString(e.getStackTrace()));
+            throw new SimpleServiceException("Can't find file", e);
+        }
+    }
+
+    private void deleteFile(String path) {
+        try {
+            Files.deleteIfExists(Path.of(path));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void deleteSetOfFiles(Set<File> files) {
+        files.forEach(file -> {
+            try {
+                deleteById(file.getId());
+            } catch (SimpleServiceException e) {
+                log.error("Exception while deleting set of files. Cant find file with id: {}{}", Arrays.toString(e.getStackTrace()), file.getId());
+            }
+        });
+    }
+
+    /**
+     * Данный метод производит удаление
+     * контента. Записи в БД при этом
+     * не удаляются.
+     *
+     * @param files список файлов.
+     */
+    @Override
+    public void deleteContent(Set<File> files) {
+        files.forEach(file -> deleteFile(file.getPath()));
     }
 }

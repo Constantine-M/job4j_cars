@@ -38,10 +38,19 @@ public class TimeZoneUtil {
         if (user.getUserZone().isEmpty()) {
             user.setUserZone("UTC");
         } else {
-            posts.forEach(post -> post.setCreated(post.getCreated()
-                    .atZone(ZoneId.of("UTC"))
-                    .withZoneSameInstant(ZoneId.of(user.getUserZone()))
-                    .toLocalDateTime()));
+            posts.forEach(post -> {
+                post.setCreated(post.getCreated()
+                        .atZone(ZoneId.of("UTC"))
+                        .withZoneSameInstant(ZoneId.of(user.getUserZone()))
+                        .toLocalDateTime());
+                post.getPriceHistory().forEach(price ->
+                        price.setCreated(price.getCreated()
+                                .atZone(ZoneId.of("UTC"))
+                                .withZoneSameInstant(ZoneId.of(user.getUserZone()))
+                                .toLocalDateTime()
+                        )
+                );
+            });
         }
     }
 }
