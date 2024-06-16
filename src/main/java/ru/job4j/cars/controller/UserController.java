@@ -68,7 +68,7 @@ public class UserController {
         try {
             var userOptional = userService.findByLoginAndPassword(user.getLogin(), user.getPassword());
             session.setAttribute("user", userOptional.get());
-            return "redirect:/";
+            return "redirect:/posts";
         } catch (SimpleServiceException e) {
             if (e.getCause() instanceof RepositoryException) {
                 model.addAttribute("error", "The email or password is incorrect");
@@ -102,7 +102,7 @@ public class UserController {
      * страницу входа.
      *
      * В случае неуспешного выполнения
-     * метода полуцчим цепочку исключений
+     * метода получим цепочку исключений
      * RepositoryException --> SimpleServiceException.
      *
      * SimpleServiceException в даннои случае
