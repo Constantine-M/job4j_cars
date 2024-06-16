@@ -79,7 +79,7 @@ public class CleanupH2DbService {
      * Данный метод очищает таблицу и СБРАСЫВАЕТ
      * СЧЕТЧИК (последовательность).
      *
-     * В это методе я просто добавил "..RESTART IDENTITY",
+     * В этом методе я просто добавил "..RESTART IDENTITY",
      * чтобы он заработал как надо.
      */
     private void truncateTables(Statement statement, String schemaName) {
@@ -117,7 +117,7 @@ public class CleanupH2DbService {
      * друг от друга и в этом случае мы легко можем
      * их очистить.
      *
-     * После очистки внешние ключи нужно бдует
+     * После очистки внешние ключи нужно будет
      * включить обратно!
      */
     private void disableConstraints(Statement statement) {

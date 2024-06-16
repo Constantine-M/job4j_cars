@@ -41,8 +41,11 @@ class UserRepositoryImplTest {
     @Test
     void whenSaveUserThenGetTheSame() throws RepositoryException {
         var user = User.builder()
+                .username("Nobody")
+                .phoneNumber("123456789")
                 .login("test")
                 .password("123")
+                .userZone("uzerZone")
                 .build();
         userRepository.create(user);
         assertThat(userRepository.findById(1).get())
@@ -53,26 +56,34 @@ class UserRepositoryImplTest {
     @Test
     void whenFindUserById2ThenGetUserConsta() throws RepositoryException {
         var userOlga = User.builder()
-                .login("Olga")
-                .password("123")
+                .username("Olga")
+                .phoneNumber("123456789")
+                .login("boss")
+                .password("1")
+                .userZone("uzerZone")
                 .build();
         var userConsta = User.builder()
-                .login("Consta")
-                .password("321")
+                .username("Consta")
+                .phoneNumber("987654321")
+                .login("BossBossa")
+                .password("2")
+                .userZone("uzerZone")
                 .build();
         userRepository.create(userOlga);
         userRepository.create(userConsta);
         assertThat(userRepository.findById(2).get())
                 .usingRecursiveComparison()
-                .ignoringFields("posts")
                 .isEqualTo(userConsta);
     }
 
     @Test
     void whenUpdateUserWithLoginConstaThenGetUserWithLoginConstaMezenin() throws RepositoryException {
         var userConsta = User.builder()
-                .login("Consta")
-                .password("321")
+                .username("Consta")
+                .phoneNumber("987654321")
+                .login("BossBossa")
+                .password("2")
+                .userZone("uzerZone")
                 .build();
         userRepository.create(userConsta);
         userConsta.setLogin("Consta Mezenin");
@@ -84,12 +95,18 @@ class UserRepositoryImplTest {
     @Test
     void whenFindAllThenGetListOfUsersWithConstaAndOlga() throws RepositoryException {
         var userOlga = User.builder()
-                .login("Olga")
-                .password("123")
+                .username("Olga")
+                .phoneNumber("123456789")
+                .login("boss")
+                .password("1")
+                .userZone("uzerZone")
                 .build();
         var userConsta = User.builder()
-                .login("Consta")
-                .password("321")
+                .username("Consta")
+                .phoneNumber("987654321")
+                .login("BossBossa")
+                .password("2")
+                .userZone("uzerZone")
                 .build();
         userRepository.create(userOlga);
         userRepository.create(userConsta);
@@ -101,12 +118,18 @@ class UserRepositoryImplTest {
     @Test
     void whenDeleteUser1ThenGetOnlyUser2() throws RepositoryException {
         var user1 = User.builder()
-                .login("user1")
-                .password("123")
+                .username("Olga")
+                .phoneNumber("123456789")
+                .login("boss")
+                .password("1")
+                .userZone("uzerZone")
                 .build();
         var user2 = User.builder()
-                .login("user2")
-                .password("123")
+                .username("Consta")
+                .phoneNumber("987654321")
+                .login("BossBossa")
+                .password("2")
+                .userZone("uzerZone")
                 .build();
         userRepository.create(user1);
         userRepository.create(user2);
@@ -117,12 +140,18 @@ class UserRepositoryImplTest {
     @Test
     void whenSaveTwoIdenticalUsersThenGetRepositoryException() throws RepositoryException {
         var user = User.builder()
-                .login("user")
-                .password("123")
+                .username("Olga")
+                .phoneNumber("123456789")
+                .login("boss")
+                .password("1")
+                .userZone("uzerZone")
                 .build();
         var userGemini = User.builder()
-                .login("user")
-                .password("123")
+                .username("Olga")
+                .phoneNumber("123456789")
+                .login("boss")
+                .password("1")
+                .userZone("uzerZone")
                 .build();
         userRepository.create(user);
         var errorMessage = "Repository exception: user cant save.";
@@ -148,42 +177,42 @@ class UserRepositoryImplTest {
     @Test
     void whenFindByLikeOnstaThenGetListOf2UsersWithConstaAndConstantine() throws RepositoryException {
         var user1 = User.builder()
-                .login("Consta")
-                .password("123")
+                .username("Consta")
+                .phoneNumber("987654321")
+                .login("nagibator2016")
+                .password("2")
+                .userZone("uzerZone")
                 .build();
         var user2 = User.builder()
-                .login("Constantine")
-                .password("123")
+                .username("Constantine")
+                .phoneNumber("987654321")
+                .login("xXxNagibatorxXx2021")
+                .password("3")
+                .userZone("uzerZone")
                 .build();
         userRepository.create(user1);
         userRepository.create(user2);
         var expected = List.of(user1, user2);
-        assertThat(userRepository.findByLikeLogin("onsta")).isEqualTo(expected);
+        assertThat(userRepository.findByLikeLogin("ibator")).isEqualTo(expected);
     }
 
     @Test
     void whenFindByLoginThenGetConsta() throws RepositoryException {
         var user = User.builder()
-                .login("Consta")
-                .password("123")
+                .username("Consta")
+                .phoneNumber("987654321")
+                .login("Boss")
+                .password("2")
+                .userZone("uzerZone")
                 .build();
         userRepository.create(user);
-        assertThat(userRepository.findByLogin("Consta").get())
+        assertThat(userRepository.findByLogin("Boss").get())
                 .usingRecursiveComparison()
                 .isEqualTo(user);
     }
 
-    /**
-     * В данном тесте важно не получать объект
-     * {@link User}, т.к. мы проверяем метод, а метод
-     * возвращает {@link Optional}.
-     */
     @Test
-    void whenCannotFindUserByLoginThenGetRepositoryException() throws RepositoryException {
-        var userTestLogin = "test";
-        var errMessage = "Repository exception: cant find user by login = ".concat(String.valueOf(userTestLogin));
-        assertThatThrownBy(() -> userRepository.findByLogin(userTestLogin))
-                .isInstanceOf(RepositoryException.class)
-                .hasMessage(errMessage);
+    void whenCannotFindUserByLoginThenGetAnEmptyOptional() throws RepositoryException {
+        assertThat(userRepository.findByLogin("test")).isEqualTo(Optional.empty());
     }
 }

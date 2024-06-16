@@ -38,7 +38,6 @@ public class CleanupH2DatabaseTestListener implements TestExecutionListener, Ord
     @Override
     public void beforeTestClass(TestContext testContext) throws Exception {
         TestExecutionListener.super.beforeTestClass(testContext);
-        /*initDatabase(testContext);*/
     }
 
     /**
@@ -86,10 +85,10 @@ public class CleanupH2DatabaseTestListener implements TestExecutionListener, Ord
     }
 
     private void initDatabase(TestContext testContext) {
-        log.info("Filling tables (ENGINE, COLOR, BODY, CAR_BRAND) begin");
+        log.info("Filling tables (ENGINE, COLOR, BODY, CAR_BRAND, GEAR_BOX) begin");
         InitH2DbService initH2DbService = testContext.getApplicationContext().getBean(InitH2DbService.class);
         initH2DbService.initDatabase();
-        log.info("Filling tables (ENGINE, COLOR, BODY, CAR_BRAND) end");
+        log.info("Filling tables (ENGINE, COLOR, BODY, CAR_BRAND, GEAR_BOX) end");
     }
 
     private void dropDatabase(TestContext testContext) {

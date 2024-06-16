@@ -9,16 +9,14 @@ import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.listener.CleanupH2DatabaseTestListener;
 import ru.job4j.cars.model.AutoPassport;
 import ru.job4j.cars.model.Car;
-import ru.job4j.cars.model.Owner;
 import ru.job4j.cars.repository.body.BodyRepository;
 import ru.job4j.cars.repository.brand.CarBrandRepository;
 import ru.job4j.cars.repository.color.CarColorRepository;
 import ru.job4j.cars.repository.engine.EngineRepository;
+import ru.job4j.cars.repository.gearbox.GearBoxRepository;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,6 +42,9 @@ class CarRepositoryImplTest {
     @Autowired
     private EngineRepository engineRepository;
 
+    @Autowired
+    private GearBoxRepository gearBoxRepository;
+
     /**
      * Данный тест просто проверяет сохранение
      * машины в БД. Здесь не учитываются
@@ -53,20 +54,19 @@ class CarRepositoryImplTest {
      */
     @Test
     void whenCreateCarThenGetTheSame() throws RepositoryException {
-        var owner = Owner.builder()
-                .name("owner")
-                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
-                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
-                .build();
+        var currentLocalDate = LocalDate.now();
         var engine = engineRepository.findById(1).get();
         var body = bodyRepository.findById(1).get();
         var carBrand = carBrandRepository.findById(1).get();
         var color = carColorRepository.findById(1).get();
+        var gearBox = gearBoxRepository.findById(1).get();
         var passport = AutoPassport.builder()
-                .original(true)
-                .owners(Set.of(owner))
+                .havingPassport("have passport")
+                .boughtAt(currentLocalDate)
+                .cleared(true)
                 .build();
         var car = Car.builder()
+                .carYear(2020)
                 .model("F150")
                 .mileage(88000)
                 .build();
@@ -75,6 +75,7 @@ class CarRepositoryImplTest {
         car.setPassport(passport);
         car.setCarColor(color);
         car.setBrand(carBrand);
+        car.setGearBox(gearBox);
         carRepository.create(car);
         var actual = carRepository.findById(car.getId()).get();
         assertThat(actual)
@@ -84,28 +85,28 @@ class CarRepositoryImplTest {
 
     @Test
     void whenFindCarByIdThenGetCarWithModelEqualsToCamry() throws RepositoryException {
-        var owner = Owner.builder()
-                .name("owner")
-                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
-                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
-                .build();
+        var currentLocalDate = LocalDate.now();
         var engine = engineRepository.findById(1).get();
         var body = bodyRepository.findById(1).get();
         var carBrand = carBrandRepository.findById(1).get();
         var color = carColorRepository.findById(1).get();
+        var gearBox = gearBoxRepository.findById(1).get();
         var passport = AutoPassport.builder()
-                .original(true)
-                .owners(Set.of(owner))
+                .havingPassport("have passport")
+                .boughtAt(currentLocalDate)
+                .cleared(true)
                 .build();
         var car = Car.builder()
+                .carYear(2020)
                 .model("Camry")
-                .mileage(321000)
+                .mileage(88000)
                 .build();
         car.setBody(body);
         car.setEngine(engine);
         car.setPassport(passport);
         car.setCarColor(color);
         car.setBrand(carBrand);
+        car.setGearBox(gearBox);
         carRepository.create(car);
         assertThat(carRepository.findById(car.getId()).get().getModel()).isEqualTo("Camry");
     }
@@ -117,18 +118,16 @@ class CarRepositoryImplTest {
 
     @Test
     void whenUpdateCarNameThenGetCherry() throws RepositoryException {
-        var owner = Owner.builder()
-                .name("owner")
-                .start(LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.MINUTES))
-                .end(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES))
-                .build();
+        var currentLocalDate = LocalDate.now();
         var engine = engineRepository.findById(1).get();
         var body = bodyRepository.findById(1).get();
         var carBrand = carBrandRepository.findById(1).get();
         var color = carColorRepository.findById(1).get();
+        var gearBox = gearBoxRepository.findById(1).get();
         var passport = AutoPassport.builder()
-                .original(true)
-                .owners(Set.of(owner))
+                .havingPassport("have passport")
+                .boughtAt(currentLocalDate)
+                .cleared(true)
                 .build();
         var car = Car.builder()
                 .model("Camry")
@@ -139,6 +138,7 @@ class CarRepositoryImplTest {
         car.setPassport(passport);
         car.setCarColor(color);
         car.setBrand(carBrand);
+        car.setGearBox(gearBox);
         carRepository.create(car);
         var newBrand = carBrandRepository.findById(3).get();
         car.setModel("Tiggo 9");

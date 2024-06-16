@@ -30,6 +30,7 @@ public class InitH2DbService {
                 fillColorTable(statement);
                 fillBodyTable(statement);
                 fillEngineTable(statement);
+                fillGearBoxTable(statement);
             } else {
                 log.warn("Skipping filling up tables, because it's not H2 database");
             }
@@ -106,6 +107,21 @@ public class InitH2DbService {
                         (1.8, 140, 'gasoline'),
                         (2.0, 180, 'diesel'),
                         (1.6, 81, 'gasoline');
+                    """;
+        executeStatement(statement, sql);
+    }
+
+    /**
+     * Заполнить таблицу gear_box
+     * тестовыми данными.
+     */
+    private void fillGearBoxTable(Statement statement) {
+        String sql = """
+                    INSERT INTO gear_box (name)
+                    VALUES
+                        ('manual'),
+                        ('automatic'),
+                        ('CVT (variator)');
                     """;
         executeStatement(statement, sql);
     }
