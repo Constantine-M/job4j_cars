@@ -4,8 +4,6 @@ import lombok.*;
 import lombok.EqualsAndHashCode.Include;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Builder
 @Entity
@@ -28,6 +26,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    private String username;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @Include
     private String login;

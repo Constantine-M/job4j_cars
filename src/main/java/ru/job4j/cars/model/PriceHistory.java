@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode.Include;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 /**
  * Модель описывает историю изменения
@@ -32,6 +31,5 @@ public class PriceHistory {
 
     private Long after;
 
-    private LocalDateTime created = LocalDateTime.now(ZoneId.of("UTC"));
-
+    private LocalDateTime created;
 }

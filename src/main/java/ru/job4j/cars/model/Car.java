@@ -26,12 +26,15 @@ public class Car {
     @Include
     private int id;
 
-    /** Модель авто. Заполянет пользователь. */
+    /** Модель авто. Заполняет пользователь. */
     @Include
     private String model;
 
-    /** Пробег автомобиля. Заполянет пользователь. */
+    /** Пробег автомобиля. Заполняет пользователь. */
     private int mileage;
+
+    @Column(name = "car_year")
+    private int carYear;
 
     /** Будет выпадающий список брендов */
     @ManyToOne
@@ -59,6 +62,11 @@ public class Car {
     @ManyToOne
     @JoinColumn(name = "body_id", foreignKey = @ForeignKey(name = "BODY_ID_FK"))
     private Body body;
+
+    /** Будет выпадающим списком */
+    @ManyToOne
+    @JoinColumn(name = "gear_box_id", foreignKey = @ForeignKey(name = "GEAR_BOX_ID_FK"))
+    private GearBox gearBox;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_passport_id", foreignKey = @ForeignKey(name = "AUTO_PASSPORT_ID_FK"))

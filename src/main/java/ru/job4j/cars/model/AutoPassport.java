@@ -4,8 +4,7 @@ import lombok.*;
 import lombok.EqualsAndHashCode.Include;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
 
 /**
  * Модель описывает паспорт
@@ -28,21 +27,32 @@ public class AutoPassport {
     @Include
     private int id;
 
-    /** ПТС оригинал или дубликат */
-    boolean original;
+    /**
+     * Когда куплена машина
+     *
+     * Во время отправки запроса на сохранение
+     * объявления, мы также будем отправлять
+     * дату в формате строки (String).
+     * По умолчанию Spring не сможет
+     * преобразовать String в LocalDateTime.
+     * Поэтому мы добавили в application.yml
+     * spring.mvc.format.date: yyyy-MM-dd
+     *
+     * Так как нам в данном случае время неважно,
+     * то использовали {@link LocalDate}.
+     */
+    @Column(name = "bought_at")
+    private LocalDate boughtAt;
 
     /**
-     * Так как в ПТС содержится не более
-     * шести владельцев, то в данном случае
-     * мы установили стратегию загрузки
-     * {@link FetchType#EAGER}.
-     *
-     * Считаю, что накладные расходы
-     * небольшие и позволяет решить
-     * текущую проблему с обновлением
-     * {@link Post}.
+     * Пасспорт оригинал, дубликат или нет ПТС.
+     * Пользователю будут доступны только 3
+     * варианта на выбор (варианты будут описаны
+     * во view).
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "auto_passport_id")
-    private Set<Owner> owners = new HashSet<>();
+    @Column(name = "having_passport")
+    private String havingPassport;
+
+    /** Авто растаможено или нет */
+    private boolean cleared;
 }

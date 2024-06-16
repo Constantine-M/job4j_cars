@@ -5,13 +5,12 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static lombok.EqualsAndHashCode.*;
+import static lombok.EqualsAndHashCode.Include;
 
 /**
  * Модель описывает объявление.
@@ -34,12 +33,13 @@ public class Post {
     @Include
     private int id;
 
-    private String title;
+    /** Краткая информация для покупателя */
+    private String summary;
 
     private String description;
 
     @Column(updatable = false)
-    private LocalDateTime created = LocalDateTime.now(ZoneId.of("UTC"));
+    private LocalDateTime created;
 
     /** Продано или нет */
     private boolean sold;
@@ -68,14 +68,14 @@ public class Post {
      * указывать колонку для вторичного ключа.
      * Если это не сделать, то hibernate будет
      * создавать отдельную таблицу, а не
-     * использовать нашу схему.
+     * использовать нашу схему. По дефолту
+     * загрузка ленивая.
      */
-    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_post_id", foreignKey = @ForeignKey(name = "AUTO_POST_ID_FK"))
     private List<PriceHistory> priceHistory = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "auto_post_id", foreignKey = @ForeignKey(name = "AUTO_POST_ID_FK"))
     private Set<File> files = new HashSet<>();
 
@@ -84,6 +84,6 @@ public class Post {
      * у одного пользователя.
      */
     @ManyToOne
-    @JoinColumn(name = "auto_user_id", foreignKey = @ForeignKey(name = "USER_ID_FK"))
+    @JoinColumn(name = "auto_user_id", foreignKey = @ForeignKey(name = "USER_ID_FK"), updatable = false)
     private User user;
 }
