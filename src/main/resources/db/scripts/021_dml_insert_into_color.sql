@@ -13,5 +13,4 @@ VALUES
     ('grey'),
     ('violet'),
     ('cyan'),
-    ('indigo'),
-    ('brown');
+    ('indigo');

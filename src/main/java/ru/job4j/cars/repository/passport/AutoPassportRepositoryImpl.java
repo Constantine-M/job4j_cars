@@ -22,7 +22,7 @@ public class AutoPassportRepositoryImpl  implements AutoPassportRepository {
     }
 
     /**
-     * найти паспорт транспортоного средства
+     * найти паспорт транспортного средства
      * по ID.
      *
      * Т.к. у нас ограничение в БД (NOT NULL),

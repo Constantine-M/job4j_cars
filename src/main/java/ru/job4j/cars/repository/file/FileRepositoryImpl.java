@@ -7,8 +7,6 @@ import ru.job4j.cars.exception.RepositoryException;
 import ru.job4j.cars.model.File;
 import ru.job4j.cars.repository.CrudRepository;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -53,20 +51,6 @@ public class FileRepositoryImpl implements FileRepository {
      */
     @Override
     public void deleteById(int id) {
-        crudRepository.query("DELETE File file WHERE file.id = :fId", File.class,
-                Map.of("fId", id));
-    }
-
-    /**
-     * Сохранить все файлы в БД.
-     *
-     * Используем уже имеющийся метод save
-     * {@link FileRepositoryImpl#save(File)}.
-     *
-     * @param files список файлов.
-     */
-    @Override
-    public void saveAllFiles(Collection<File> files) {
-        files.forEach(this::save);
+        crudRepository.run("DELETE File file WHERE file.id = :fId", Map.of("fId", id));
     }
 }

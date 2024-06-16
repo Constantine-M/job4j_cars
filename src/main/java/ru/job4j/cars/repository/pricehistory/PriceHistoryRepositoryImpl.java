@@ -5,24 +5,21 @@ import org.springframework.stereotype.Repository;
 import ru.job4j.cars.model.PriceHistory;
 import ru.job4j.cars.repository.CrudRepository;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
- * @author Constantine on 14.04.2024
+ * @author Constantine on 29.05.2024
  */
 @AllArgsConstructor
 @Repository
 public class PriceHistoryRepositoryImpl implements PriceHistoryRepository {
 
-    private CrudRepository crudRepository;
+    private final CrudRepository crudRepository;
 
     @Override
-    public void save(PriceHistory priceHistory) {
-        crudRepository.run(session -> session.save(priceHistory));
-    }
-
-    @Override
-    public Collection<PriceHistory> findAll() {
-        return crudRepository.query("FROM PriceHistory ph", PriceHistory.class);
+    public List<PriceHistory> findAllByIds(List<Integer> ids) {
+        return crudRepository.query("FROM PriceHistory ph WHERE ph.id IN :fIds", PriceHistory.class,
+                Map.of("fIds", ids));
     }
 }

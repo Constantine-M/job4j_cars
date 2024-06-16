@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS auto_post
 (
     id           serial PRIMARY KEY,
-    title        VARCHAR(96),
+    summary        VARCHAR(96),
     description  TEXT,
     created      TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     sold         BOOLEAN,

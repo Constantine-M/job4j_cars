@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS gear_box
+(
+    id SERIAL PRIMARY KEY ,
+    name VARCHAR(64)
+)

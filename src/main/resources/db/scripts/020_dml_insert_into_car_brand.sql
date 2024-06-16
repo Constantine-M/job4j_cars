@@ -29,4 +29,8 @@ INSERT INTO car_brand (name)
          ('Jaguar'),
          ('Land Rover'),
          ('Mini'),
+         ('Lada'),
+         ('UAZ'),
+         ('VAZ'),
+         ('Moskvich'),
          ('Infiniti');

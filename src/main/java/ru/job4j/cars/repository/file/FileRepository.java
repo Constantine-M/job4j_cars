@@ -13,8 +13,6 @@ public interface FileRepository {
 
     File save(File file);
 
-    void saveAllFiles(Collection<File> files);
-
     Optional<File> findById(int id) throws RepositoryException;
 
     void deleteById(int id);

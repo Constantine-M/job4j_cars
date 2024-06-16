@@ -55,10 +55,6 @@ public class UserRepositoryImpl implements UserRepository {
      * на добавление user-а в persistent
      * context.
      *
-     * В данном методе не удается поймать исключение
-     * в момент, когда пользователь уже
-     * существует, поэтому делается проверка.
-     *
      * @param user пользователь
      * @return пользователь с ID
      */
@@ -187,9 +183,6 @@ public class UserRepositoryImpl implements UserRepository {
                 User.class,
                 Map.of("fLogin", login)
         );
-        if (userOptional.isEmpty()) {
-            throw new RepositoryException("Repository exception: cant find user by login = ".concat(login));
-        }
         return userOptional;
     }
 
