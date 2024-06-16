@@ -14,16 +14,11 @@
     <include file="../scripts/003_ddl_create_table_color.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/004_ddl_create_engine.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/005_ddl_create_body.sql" relativeToChangelogFile="true"/>
-    <include file="../scripts/006_ddl_create_auto_passport.sql" relativeToChangelogFile="true"/>
-    <include file="../scripts/007_ddl_create_owners.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/006_ddl_create_gear_box.sql" relativeToChangelogFile="true"/>
+    <include file="../scripts/007_ddl_create_auto_passport.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/008_ddl_create_cars.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/009_ddl_create_auto_post.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/010_ddl_create_price_history.sql" relativeToChangelogFile="true"/>
     <include file="../scripts/011_ddl_create_table_files.sql" relativeToChangelogFile="true"/>
-
-<!--    <include file="../scripts/020_dml_insert_into_car_brand.sql" relativeToChangelogFile="true"/>-->
-<!--    <include file="../scripts/021_dml_insert_into_color.sql" relativeToChangelogFile="true"/>-->
-<!--    <include file="../scripts/022_dml_insert_into_body.sql" relativeToChangelogFile="true"/>-->
-<!--    <include file="../scripts/023_dml_insert_into_engine.sql" relativeToChangelogFile="true"/>-->
 
 </databaseChangeLog>
